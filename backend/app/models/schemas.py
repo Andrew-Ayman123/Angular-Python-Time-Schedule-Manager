@@ -1,10 +1,3 @@
-"""
-Base models for schedule optimization API.
-
-This module contains Pydantic models that define the structure
-of requests and responses for the schedule optimization system.
-"""
-
 from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel, Field, field_validator

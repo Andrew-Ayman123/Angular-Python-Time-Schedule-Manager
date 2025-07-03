@@ -1,10 +1,3 @@
-"""
-Application configuration module.
-
-This module contains configuration settings for the FastAPI application,
-including API metadata, CORS settings, and optimization parameters.
-"""
-
 from typing import List
 from pydantic_settings import BaseSettings
 
@@ -38,8 +31,9 @@ class Settings(BaseSettings):
     allowed_headers: List[str] = ["*"]
 
     # Logging Configuration
-    log_level: str = "INFO"
-    log_format: str = "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"
+    log_level_format: list[str]=[
+        ["INFO","<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"]
+    ]
 
 
 # Global settings instance

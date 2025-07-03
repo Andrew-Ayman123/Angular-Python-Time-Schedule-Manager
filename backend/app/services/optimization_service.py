@@ -1,10 +1,3 @@
-"""
-Schedule optimization service using Integer Linear Programming (ILP).
-
-This module implements the core optimization logic for employee scheduling
-using PuLP library for mathematical optimization.
-"""
-
 import time
 from datetime import datetime, timedelta
 from typing import List, Dict, Tuple, Set
@@ -221,7 +214,7 @@ class ScheduleOptimizer:
                     employee_hours += shift.duration_hours
             
             # Calculate overtime
-            if employee_hours > employee.max_hours:  # Assuming 40-hour standard week
+            if employee_hours > employee.max_hours: 
                 total_overtime += int((employee_hours - employee.max_hours) * 60)  # Convert to minutes
         
         # Find unassigned shifts

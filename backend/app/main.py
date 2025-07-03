@@ -1,19 +1,3 @@
-"""
-Schedule Optimization API - Main Application Module
-
-A FastAPI application for employee scheduling optimization using Integer Linear Programming (ILP).
-This application provides RESTful APIs for optimizing work schedules with advanced constraints
-and real-time performance metrics.
-
-Features:
-- Modular FastAPI architecture
-- ILP-based optimization using PuLP
-- Comprehensive API documentation
-- Health monitoring
-- Structured logging
-- CORS support
-"""
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger

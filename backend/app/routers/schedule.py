@@ -1,10 +1,3 @@
-"""
-Schedule optimization API router.
-
-This module contains the FastAPI router for schedule optimization endpoints,
-providing RESTful API access to the ILP optimization service.
-"""
-
 from datetime import datetime
 from fastapi import APIRouter, HTTPException, status
 from loguru import logger
