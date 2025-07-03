@@ -1,0 +1,28 @@
+# Dependency directories
+node_modules
+bower_components
+
+# Environment files
+.env
+.env.*
+
+# Angular build output
+dist
+out-tsc
+
+# System/IDE files
+*.log
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Cache and temp files
+.npm
+.cache
+.tmp
+.angular
+
+# Docker-specific files
+.dockerignore
+Dockerfile
