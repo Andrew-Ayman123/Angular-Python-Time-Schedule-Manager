@@ -1,12 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { SidebarComponent, SidebarAction } from './components/sidebar/sidebar.component';
+import { CalendarComponent } from './components/calendar/calendar.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [
+    // RouterOutlet, 
+    CommonModule, 
+    SidebarComponent, 
+    CalendarComponent
+  ],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
-  protected title = 'Front-End';
+  protected title = 'Schedule Manager';
 }
