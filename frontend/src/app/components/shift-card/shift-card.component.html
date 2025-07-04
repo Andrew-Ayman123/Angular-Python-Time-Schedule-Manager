@@ -34,8 +34,8 @@
                     [value]="emp"
                     [disabled]="!emp.canBeAssignedToShift(shift)">
           <div class="employee-option">
-            <div class="employee-option-avatar" [style.background-color]="employee?.getColor()">
-              {{ employee?.getInitials() }}
+            <div class="employee-option-avatar" [style.background-color]="emp?.getColor()">
+              {{ emp?.getInitials() }}
             </div>
             <div class="employee-option-details">
               <div class="employee-option-name">{{ emp.name }}</div>

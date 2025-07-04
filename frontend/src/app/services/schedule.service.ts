@@ -316,7 +316,6 @@ export class ScheduleService {
   ): Employee | null {
     const eligibleEmployees = employees.filter(employee => {
       const currentAssignments = employeeAssignments.get(employee.id) || [];
-      const currentHours = employeeWorkingHours.get(employee.id) || 0;
       return employee.canBeAssignedToShift(
         shift,
         currentAssignments);
@@ -334,9 +333,8 @@ export class ScheduleService {
     employeeWorkingHours: Map<string, number>
   ): Employee {
     // Priority criteria for selecting the best employee:
-    // 1. Employee with the least current working hours (load balancing)
-    // 2. Employee with the most matching skills (skill utilization)
-    // 3. Tie-breaker: lexicographical order by name
+    // 1. Employee with the least current working hours
+    // 2. Tie-breaker: lexicographical order by name
     
     return eligibleEmployees.reduce((best, current) => {
       const bestHours = employeeWorkingHours.get(best.id) || 0;
