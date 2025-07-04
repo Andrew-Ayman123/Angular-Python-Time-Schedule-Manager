@@ -169,9 +169,7 @@
             <span class="day-number">{{ date.getDate() }}</span>
             <mat-chip 
               *ngIf="getShiftsForDate(date).length > 0" 
-              class="shift-count-chip"
-              [matBadge]="getShiftsForDate(date).length"
-              matBadgeColor="accent">
+              class="shift-count-chip">
               {{ getShiftsForDate(date).length }} shifts
             </mat-chip>
           </div>

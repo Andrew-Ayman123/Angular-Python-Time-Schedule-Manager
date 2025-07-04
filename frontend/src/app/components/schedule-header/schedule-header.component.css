@@ -81,7 +81,7 @@
   flex-wrap: wrap;
 }
 
-.upload-btn, .process-btn, .schedule-btn {
+.upload-btn, .process-btn, .schedule-btn , .export-btn {
   min-width: 160px;
   height: 40px;
   font-weight: var(--font-weight-medium);
@@ -89,13 +89,13 @@
   letter-spacing: 0.5px;
 }
 
-.upload-btn {
+.upload-btn, .export-btn {
   background: rgba(255, 255, 255, 0.2) !important;
   border: 2px solid rgba(255, 255, 255, 0.3);
   color: white !important;
 }
 
-.upload-btn:hover {
+.upload-btn:hover, .export-btn:hover {
   background: rgba(255, 255, 255, 0.3) !important;
   border-color: rgba(255, 255, 255, 0.5);
 }

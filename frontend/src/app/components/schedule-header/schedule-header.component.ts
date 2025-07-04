@@ -102,6 +102,10 @@ export class ScheduleHeaderComponent {
     }
   }
 
+  onExportSchedule(): void {
+    this.scheduleService.exportSchedule();
+  }
+
   onGenerateOfflineSchedule(): void {
     this.scheduleService.generateScheduleOffline();
   }

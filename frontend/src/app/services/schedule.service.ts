@@ -380,4 +380,62 @@ export class ScheduleService {
     });
     this.shifts.set(updatedShifts);
   }
+
+  exportSchedule(): void {
+    const shifts = this.shifts();
+    const employees = this.employees();
+    
+    // Create CSV header
+    const headers = [
+      'id',
+      'role',
+      'start_time',
+      'end_time',
+      'required_skill',
+      'employee_id',
+      'employee_name',
+      'employee_skills',
+      'employee_max_hours',
+      'employee_availability_start',
+      'employee_availability_end'
+    ];
+    
+    // Convert shifts data to CSV rows
+    const csvRows = shifts.map(shift => {
+      // Find the assigned employee if any
+      const assignedEmployee = shift.assignedEmployeeId 
+        ? employees.find(emp => emp.id === shift.assignedEmployeeId)
+        : null;
+      
+      return [
+        shift.id,
+        shift.title,
+        shift.startTime.toISOString(),
+        shift.endTime.toISOString(),
+        shift.requiredSkills.join(';'), // Join multiple skills with semicolon
+        assignedEmployee?.id || 'N/A',
+        assignedEmployee?.name || 'N/A',
+        assignedEmployee?.skills.join(';') || 'N/A',
+        assignedEmployee?.maxHours?.toString() || 'N/A',
+        assignedEmployee ? assignedEmployee.availabilityStart.toISOString() : 'N/A',
+        assignedEmployee ? assignedEmployee.availabilityEnd.toISOString() : 'N/A'
+      ];
+    });
+    
+    // Combine headers and data
+    const csvContent = [headers, ...csvRows]
+      .map(row => row.map(field => `"${field}"`).join(','))
+      .join('\n');
+    
+    // Create and download the CSV file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `schedule_export_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 }

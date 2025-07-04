@@ -14,8 +14,8 @@
   <div class="actions-section">
     <div class="action-group">
       <h3 class="group-title">
-        <mat-icon>upload</mat-icon>
-        Data Import
+        <mat-icon>description</mat-icon>
+        Data Handling
       </h3>
       <div class="action-buttons">
         <div class="file-upload-section">
@@ -73,6 +73,17 @@
             class="process-btn">
             <mat-icon>upload</mat-icon>
             Process
+          </button>
+        </div>
+
+        <div class="file-upload-section">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            (click)="onExportSchedule()"
+            class="export-btn">
+            <mat-icon>download</mat-icon>
+            Export Schedule
           </button>
         </div>
       </div>
