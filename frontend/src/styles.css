@@ -424,43 +424,92 @@ body {
 }
 
 /* Material Design Global Overrides */
-::ng-deep .mat-mdc-chip-set {
+.mat-mdc-chip-set {
   display: flex;
   flex-wrap: wrap;
   gap: var(--spacing-xs);
 }
 
-::ng-deep .mat-mdc-chip {
+.mat-mdc-chip {
   font-size: var(--font-size-sm) !important;
   min-height: 20px !important;
 }
 
-::ng-deep .mat-mdc-fab.mat-mdc-mini-fab {
+.mat-mdc-fab.mat-mdc-mini-fab {
   width: 32px !important;
   height: 32px !important;
 }
 
-::ng-deep .mat-mdc-fab.mat-mdc-mini-fab .mat-mdc-button-base {
+.mat-mdc-fab.mat-mdc-mini-fab .mat-mdc-button-base {
   width: 32px !important;
   height: 32px !important;
 }
 
-::ng-deep .mat-mdc-fab.mat-mdc-mini-fab mat-icon {
+.mat-mdc-fab.mat-mdc-mini-fab mat-icon {
   font-size: 16px !important;
   width: 16px !important;
   height: 16px !important;
 }
 
-::ng-deep .mat-mdc-menu-panel {
+.mat-mdc-menu-panel {
   border-radius: var(--border-radius-md) !important;
   box-shadow: var(--shadow-lg) !important;
+  background-color: white !important;
 }
 
-::ng-deep .mat-mdc-card {
+/* Mat-menu item background styling */
+.mat-mdc-menu-item {
+  background-color: white !important;
+}
+
+.mat-mdc-menu-item:hover {
+  background-color: var(--background-light) !important;
+}
+
+.mat-mdc-menu-item:focus {
+  background-color: var(--background-light) !important;
+}
+
+.mat-mdc-card {
   border-radius: var(--border-radius-md) !important;
   box-shadow: var(--shadow-sm) !important;
 }
 
-::ng-deep .mat-mdc-button {
+.mat-mdc-button {
   border-radius: var(--border-radius-md) !important;
 }
+
+/* Ensure the dropdown panel has proper background */
+.mat-mdc-select-panel {
+  background-color: white !important;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Mat-option background styling */
+.mat-mdc-option {
+  background-color: white !important;
+}
+
+.mat-mdc-option:hover {
+  background-color: lightgray !important;
+}
+
+.mat-mdc-option.mdc-list-item--selected {
+  background-color: #e3f2fd !important;
+}
+
+.mat-mdc-option.mat-mdc-option-disabled {
+  background-color: #fafafa !important;
+  opacity: 0.6;
+}
+
+/* Tooltip background styling */
+.mat-mdc-tooltip {
+  background-color: rgba(55, 71, 79, 0.9) !important;
+  color: white !important;
+  font-size: var(--font-size-sm) !important;
+  border-radius: var(--border-radius-sm) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
