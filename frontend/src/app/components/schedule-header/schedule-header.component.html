@@ -1,0 +1,144 @@
+<div class="schedule-header">
+  <div class="header-section">
+    <div class="title-section">
+      <h1 class="page-title">
+        <mat-icon>schedule</mat-icon>
+        Employee Schedule Manager
+      </h1>
+      <p class="page-description">
+        Efficiently manage employee schedules with smart assignment and optimization tools
+      </p>
+    </div>
+  </div>
+
+  <div class="actions-section">
+    <div class="action-group">
+      <h3 class="group-title">
+        <mat-icon>upload</mat-icon>
+        Data Import
+      </h3>
+      <div class="action-buttons">
+        <div class="file-upload-section">
+          <input 
+            type="file" 
+            accept=".csv" 
+            (change)="onEmployeesFileSelect($event)"
+            #employeesFileInput
+            hidden>
+          <button 
+            mat-raised-button 
+            color="primary" 
+            (click)="employeesFileInput.click()"
+            class="upload-btn">
+            <mat-icon>people</mat-icon>
+            Import Employees
+          </button>
+          <span class="file-info" *ngIf="employeesFile()">
+            {{ employeesFile()?.name }}
+          </span>
+          <button 
+            mat-raised-button 
+            color="accent" 
+            (click)="onImportEmployees(); employeesFileInput.value = ''"
+            [disabled]="!employeesFile()"
+            class="process-btn">
+            <mat-icon>upload</mat-icon>
+            Process
+          </button>
+        </div>
+
+        <div class="file-upload-section">
+          <input 
+            type="file" 
+            accept=".csv" 
+            (change)="onShiftsFileSelect($event)"
+            #shiftsFileInput
+            hidden>
+          <button 
+            mat-raised-button 
+            color="primary" 
+            (click)="shiftsFileInput.click()"
+            class="upload-btn">
+            <mat-icon>event</mat-icon>
+            Import Shifts
+          </button>
+          <span class="file-info" *ngIf="shiftsFile()">
+            {{ shiftsFile()?.name }}
+          </span>
+          <button 
+            mat-raised-button 
+            color="accent" 
+            (click)="onImportShifts(); shiftsFileInput.value = ''"
+            [disabled]="!shiftsFile()"
+            class="process-btn">
+            <mat-icon>upload</mat-icon>
+            Process
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-group">
+      <h3 class="group-title">
+        <mat-icon>auto_fix_high</mat-icon>
+        Schedule Generation
+      </h3>
+      <div class="action-buttons">
+        <button 
+          mat-raised-button 
+          color="warn" 
+          (click)="onGenerateOfflineSchedule()"
+          class="schedule-btn">
+          <mat-icon>offline_bolt</mat-icon>
+          Generate Offline Schedule
+        </button>
+
+        <div class="ilp-section">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            [matMenuTriggerFor]="ilpMenu"
+            class="schedule-btn">
+            <mat-icon>settings</mat-icon>
+            ILP Schedule Options
+          </button>
+          
+          <mat-menu #ilpMenu="matMenu" class="ilp-menu">
+            <div class="ilp-options" (click)="$event.stopPropagation()">
+              <h4>Optimization Options</h4>
+              <mat-checkbox 
+                [(ngModel)]="ilpOptions().optimizeForCost"
+                (change)="updateILPOption('optimizeForCost', $event.checked)">
+                Optimize for Cost
+              </mat-checkbox>
+              <mat-checkbox 
+                [(ngModel)]="ilpOptions().minimizeOvertime"
+                (change)="updateILPOption('minimizeOvertime', $event.checked)">
+                Minimize Overtime
+              </mat-checkbox>
+              <mat-checkbox 
+                [(ngModel)]="ilpOptions().prioritizeSkillMatch"
+                (change)="updateILPOption('prioritizeSkillMatch', $event.checked)">
+                Prioritize Skill Match
+              </mat-checkbox>
+              <mat-checkbox 
+                [(ngModel)]="ilpOptions().balanceWorkload"
+                (change)="updateILPOption('balanceWorkload', $event.checked)">
+                Balance Workload
+              </mat-checkbox>
+              <div class="menu-actions">
+                <button 
+                  mat-raised-button 
+                  color="primary" 
+                  (click)="onGenerateILPSchedule()">
+                  <mat-icon>play_arrow</mat-icon>
+                  Generate ILP Schedule
+                </button>
+              </div>
+            </div>
+          </mat-menu>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

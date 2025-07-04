@@ -1,0 +1,233 @@
+<div class="calendar-container">
+  <!-- Calendar Header -->
+  <mat-card class="calendar-header-card">
+    <mat-card-header>
+      <mat-card-title>
+        <div class="header-content">
+          <div class="title-section">
+            <mat-icon>calendar_today</mat-icon>
+            <span>Schedule Calendar</span>
+          </div>
+          <div class="view-controls">
+            <button 
+              mat-button 
+              [class.active]="selectedView() === 'week'"
+              (click)="switchView('week')">
+              <mat-icon>view_week</mat-icon>
+              Week
+            </button>
+            <button 
+              mat-button 
+              [class.active]="selectedView() === 'month'"
+              (click)="switchView('month')">
+              <mat-icon>calendar_view_month</mat-icon>
+              Month
+            </button>
+          </div>
+        </div>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="navigation-controls">
+        <button mat-icon-button (click)="previousPeriod()">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <div class="period-display">
+          <ng-container *ngIf="selectedView() === 'week'">
+            <h3>{{ formatDate(currentWeek()[0]) }} - {{ formatDate(currentWeek()[6]) }}</h3>
+          </ng-container>
+          <ng-container *ngIf="selectedView() === 'month'">
+            <h3>{{ formatMonthYear(currentDate()) }}</h3>
+          </ng-container>
+        </div>
+        <button mat-icon-button (click)="nextPeriod()">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+        <button mat-raised-button color="primary" (click)="goToToday()">
+          <mat-icon>today</mat-icon>
+          Today
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Week View -->
+  <div class="calendar-content" *ngIf="selectedView() === 'week'">
+    <div class="week-grid">
+      <!-- Days Header -->
+      <div class="days-header">
+        <div class="employee-column-header">
+          <strong>Employees</strong>
+          <div class="employee-count">{{ employees().length }} total</div>
+        </div>
+        <div class="day-header" *ngFor="let day of weekDays; let i = index">
+          <div class="day-name">{{ day }}</div>
+          <div class="day-date" [class.today]="isToday(currentWeek()[i])">
+            {{ currentWeek()[i].getDate() }}
+          </div>
+          <div class="day-shift-count">
+            {{ getShiftsForDate(currentWeek()[i]).length }} shifts
+          </div>
+        </div>
+      </div>
+
+      <!-- Employee Swim Lanes -->
+      <div class="employee-swim-lanes">
+        <!-- Unassigned Shifts Row - Only show if there are unassigned shifts -->
+        <div class="employee-row swim-lane unassigned-row" *ngIf="hasUnassignedShifts()">
+          <!-- Unassigned Shifts Info Column -->
+          <app-employee-details-card 
+            [isUnassignedCard]="true"
+            [unassignedShiftsCount]="getUnassignedShiftsCount()">
+          </app-employee-details-card>
+
+          <!-- Day Cells for Unassigned Shifts -->
+          <div class="day-cells-container">
+            <div class="day-cell" *ngFor="let date of currentWeek(); let dayIndex = index"
+                 [class.today-cell]="isToday(date)">
+              <div class="day-content">
+                <div class="day-label">{{ date.getDate() }}</div>
+                
+                <!-- Unassigned Shifts for this day -->
+                <div class="shifts-container">
+                  <app-shift-card
+                    *ngFor="let shift of getUnassignedShiftsForDate(date)"
+                    [shift]="shift"
+                    [isUnassigned]="true"
+                    [employees]="employees()"
+                    (assignEmployee)="onAssignEmployee($event)">
+                  </app-shift-card>
+                </div>
+                
+                <!-- No unassigned shifts indicator -->
+                <div class="no-shifts" *ngIf="getUnassignedShiftsForDate(date).length === 0">
+                  <mat-icon class="no-shifts-icon">event_available</mat-icon>
+                  <span>No unassigned shifts</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Regular Employee Rows -->
+        <div class="employee-row swim-lane" *ngFor="let employee of employees(); let empIndex = index" 
+             [class.even-row]="empIndex % 2 === 0"
+             [class.odd-row]="empIndex % 2 === 1">
+          
+          <!-- Employee Info Column -->
+          <app-employee-details-card 
+            [employee]="employee">
+          </app-employee-details-card>
+
+          <!-- Day Cells in Swim Lane -->
+          <div class="day-cells-container">
+            <div class="day-cell" *ngFor="let date of currentWeek(); let dayIndex = index"
+                 [class.today-cell]="isToday(date)">
+              <div class="day-content">
+                <div class="day-label">{{ date.getDate() }}</div>
+                
+                <!-- Shifts for this employee on this day - only show assigned shifts -->
+                <div class="shifts-container">
+                  <app-shift-card
+                    *ngFor="let shift of getAssignedShiftsForEmployeeAndDate(employee.id, date)"
+                    [shift]="shift"
+                    [employee]="employee"
+                    [isUnassigned]="false"
+                    (assignEmployee)="onAssignEmployee($event)"
+                    (unassignEmployee)="onUnassignEmployee($event)">
+                  </app-shift-card>
+                </div>
+                
+                <!-- Available indicator when no assigned shifts -->
+                <div class="no-shifts" *ngIf="getAssignedShiftsForEmployeeAndDate(employee.id, date).length === 0">
+                  <mat-icon class="no-shifts-icon">event_available</mat-icon>
+                  <span>Available</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Month View -->
+  <div class="calendar-content" *ngIf="selectedView() === 'month'">
+    <div class="month-grid">
+      <!-- Days Header -->
+      <div class="month-days-header">
+        <div class="month-day-header" *ngFor="let day of weekDays">
+          {{ day }}
+        </div>
+      </div>
+
+      <!-- Month Weeks -->
+      <div class="month-week" *ngFor="let week of currentMonth()">
+        <div 
+          class="month-day-cell" 
+          *ngFor="let date of week"
+          [class.other-month]="!isCurrentMonth(date)"
+          [class.today]="isToday(date)">
+          
+          <div class="month-day-header">
+            <span class="day-number">{{ date.getDate() }}</span>
+            <mat-chip 
+              *ngIf="getShiftsForDate(date).length > 0" 
+              class="shift-count-chip"
+              [matBadge]="getShiftsForDate(date).length"
+              matBadgeColor="accent">
+              {{ getShiftsForDate(date).length }} shifts
+            </mat-chip>
+          </div>
+          
+          <div class="month-day-content">
+            <div 
+              class="month-shift-item" 
+              *ngFor="let shift of getShiftsForDate(date); let i = index"
+              [class.assigned]="shift.assignedEmployeeId"
+              [class.unassigned]="!shift.assignedEmployeeId"
+              matTooltip="{{shift.title}} - {{formatTime(shift.startTime)}} to {{formatTime(shift.endTime)}}{{ shift.assignedEmployeeId ? ' (Assigned to ' + getEmployeeName(shift.assignedEmployeeId) + ')' : '' }}">
+              
+              <div class="shift-brief">
+                <span class="shift-time">{{ formatTime(shift.startTime) }}</span>
+                <span class="shift-title">{{ shift.title }}</span>
+              </div>
+              
+              <div class="shift-assignment" *ngIf="shift.assignedEmployeeId">
+                <mat-icon>person</mat-icon>
+                <span>{{ getEmployeeName(shift.assignedEmployeeId) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <mat-card class="legend-card">
+    <mat-card-header>
+      <mat-card-title>Legend</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="legend-items">
+        <div class="legend-item">
+          <div class="legend-color unassigned"></div>
+          <span>Unassigned Shift</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color assigned"></div>
+          <span>Assigned Shift</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color today-indicator"></div>
+          <span>Today</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color overtime"></div>
+          <span>Overtime Hours</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

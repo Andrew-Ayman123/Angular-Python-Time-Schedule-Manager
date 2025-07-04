@@ -1,0 +1,61 @@
+<div class="employee-info">
+  <mat-card class="employee-card" [class.unassigned-card]="isUnassignedCard">
+    <div class="employee-avatar" 
+         [class.unassigned-avatar]="isUnassignedCard"
+         [style.background-color]="!isUnassignedCard && employee ? getEmployeeColor(employee.id) : null">
+      <mat-icon *ngIf="isUnassignedCard">assignment_late</mat-icon>
+      <span *ngIf="!isUnassignedCard && employee">{{ getEmployeeInitials(employee.name) }}</span>
+    </div>
+    
+    <div class="employee-details">
+      <div class="employee-name">
+        {{ isUnassignedCard ? 'Unassigned Shifts' : employee?.name }}
+      </div>
+      
+      <div class="employee-meta">
+        <span class="employee-id" *ngIf="isUnassignedCard">Needs Assignment</span>
+        <span class="employee-hours">
+          {{ isUnassignedCard ? unassignedShiftsCount + ' shifts' : '' }}
+        </span>
+      </div>
+
+      <!-- Regular employee hours details -->
+      <div class="employee-hours-details" *ngIf="!isUnassignedCard && employee">
+        <div class="hours-info">
+          <span class="assigned-hours" 
+                [class.hours-critical]="isEmployeeOvertime(employee.id)">
+            Assigned: {{ getEmployeeAssignedHours(employee.id) }}h
+          </span>
+          <span class="remaining-hours" 
+                [class.hours-warning]="getEmployeeRemainingHours(employee.id) < 5 && !isEmployeeOvertime(employee.id)"
+                [class.hours-critical]="getEmployeeRemainingHours(employee.id) === 0 || isEmployeeOvertime(employee.id)">
+            <ng-container *ngIf="!isEmployeeOvertime(employee.id)">
+              Remaining: {{ getEmployeeRemainingHours(employee.id) }}h
+            </ng-container>
+            <ng-container *ngIf="isEmployeeOvertime(employee.id)">
+              Overtime: {{ getEmployeeOvertimeHours(employee.id) }}h
+            </ng-container>
+          </span>
+        </div>
+        
+        <div class="hours-progress">
+          <div class="progress-bar">
+            <div class="progress-fill" 
+                 [style.width.%]="getProgressBarPercentage(employee.id)"
+                 [style.background-color]="getProgressBarColor(employee.id)">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Employee skills -->
+      <div class="employee-skills" *ngIf="!isUnassignedCard && employee">
+        <mat-chip-set>
+          <mat-chip *ngFor="let skill of employee.skills" class="skill-chip">
+            {{ skill }}
+          </mat-chip>
+        </mat-chip-set>
+      </div>
+    </div>
+  </mat-card>
+</div>

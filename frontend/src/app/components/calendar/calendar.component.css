@@ -1,0 +1,13 @@
+/* Calendar container styles */
+.calendar-container {
+  padding: var(--spacing-md);
+  background: var(--background-secondary);
+  min-height: 100vh;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .calendar-container {
+    padding: var(--spacing-sm);
+  }
+}

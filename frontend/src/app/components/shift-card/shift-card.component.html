@@ -1,0 +1,86 @@
+<div 
+  class="shift-card" 
+  [class.unassigned-shift-card]="isUnassigned"
+  [class.assigned]="shift.assignedEmployeeId === employee?.id"
+  [class.skill-match]="employee && hasSkillMatch(employee, shift)"
+  [class.skill-mismatch]="employee && !hasSkillMatch(employee, shift)"
+  [matTooltip]="shift.title + ' - ' + formatTime(shift.startTime) + ' to ' + formatTime(shift.endTime)">
+  
+  <div class="shift-header">
+    <div class="shift-title">{{ shift.title }}</div>
+    <div class="shift-time">
+      <mat-icon class="time-icon">schedule</mat-icon>
+      {{ formatTime(shift.startTime) }} - {{ formatTime(shift.endTime) }}
+    </div>
+  </div>
+  
+  <div class="shift-skills">
+    <mat-chip-set>
+      <mat-chip *ngFor="let skill of shift.requiredSkills" 
+                class="required-skill-chip"
+                [class.employee-has-skill]="employee && employee.skills.includes(skill)"
+                [class.employee-missing-skill]="employee && !employee.skills.includes(skill)">
+        {{ skill }}
+      </mat-chip>
+    </mat-chip-set>
+  </div>
+
+  <!-- Unassigned shift actions -->
+  <div class="shift-actions" *ngIf="isUnassigned">
+    <mat-form-field appearance="outline" class="assign-select">
+      <mat-label>Assign to Employee</mat-label>
+      <mat-select (selectionChange)="onAssignEmployee($event.value)" 
+                  placeholder="Select employee...">
+        <mat-option *ngFor="let emp of employees" 
+                    [value]="emp"
+                    [disabled]="!canAssignEmployee(emp, shift)">
+          <div class="employee-option">
+            <div class="employee-option-avatar" [style.background-color]="getEmployeeColor(emp.id)">
+              {{ getEmployeeInitials(emp.name) }}
+            </div>
+            <div class="employee-option-details">
+              <div class="employee-option-name">{{ emp.name }}</div>
+              <div class="employee-option-skills">
+                <mat-icon *ngIf="hasSkillMatch(emp, shift)" class="skill-match-icon">check_circle</mat-icon>
+                <mat-icon *ngIf="!hasSkillMatch(emp, shift)" class="skill-mismatch-icon">cancel</mat-icon>
+                <span>{{ emp.skills.join(', ') }}</span>
+              </div>
+            </div>
+          </div>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- Assigned shift actions -->
+  <div class="shift-actions" *ngIf="!isUnassigned">
+    <ng-container *ngIf="!shift.assignedEmployeeId">
+      <button 
+        mat-mini-fab 
+        color="primary" 
+        (click)="employee && onAssignEmployee(employee)"
+        [disabled]="!employee || !canAssignEmployee(employee, shift)"
+        [matTooltip]="'Assign to ' + (employee?.name || '')">
+        <mat-icon>add</mat-icon>
+      </button>
+      <div class="assignment-hint" *ngIf="employee && hasSkillMatch(employee, shift)">
+        <mat-icon class="skill-match-icon">check_circle</mat-icon>
+        <span>Good match</span>
+      </div>
+    </ng-container>
+    
+    <ng-container *ngIf="shift.assignedEmployeeId === employee?.id">
+      <div class="assigned-indicator">
+        <mat-icon color="accent">check_circle</mat-icon>
+        <span>Assigned</span>
+      </div>
+      <button 
+        mat-mini-fab 
+        color="warn" 
+        (click)="onUnassignEmployee()"
+        [matTooltip]="'Unassign from ' + (employee?.name || '')">
+        <mat-icon>remove</mat-icon>
+      </button>
+    </ng-container>
+  </div>
+</div>
