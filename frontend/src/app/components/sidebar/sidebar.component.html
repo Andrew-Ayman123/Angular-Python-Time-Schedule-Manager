@@ -1,0 +1,137 @@
+<div class="sidebar" [class.collapsed]="isCollapsed()">
+  <!-- Sidebar Header -->
+  <div class="sidebar-header">
+    <div class="logo-section" *ngIf="!isCollapsed()">
+      <div class="logo-placeholder">Logo</div>
+      <h4 class="company-name">Progressio Solutions</h4>
+    </div>
+    <button 
+      type="button" 
+      class="btn btn-link toggle-btn" 
+      (click)="toggleSidebar()"
+      [attr.aria-label]="isCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'">
+      <i class="bi" [class.bi-list]="isCollapsed()" [class.bi-x-lg]="!isCollapsed()"></i>
+    </button>
+  </div>
+
+  <!-- Main Content -->
+  <div class="sidebar-content" *ngIf="!isCollapsed()">
+    <!-- Tabs Navigation -->
+    <div class="tabs-container">
+      <div class="tabs-nav">
+        <button 
+          type="button" 
+          class="tab-button" 
+          [class.active]="activeTab() === 'employees'"
+          (click)="setActiveTab('employees')">
+          <i class="bi bi-people-fill me-2"></i>
+          Employees ({{ employees().length }})
+        </button>
+        <button 
+          type="button" 
+          class="tab-button" 
+          [class.active]="activeTab() === 'shifts'"
+          (click)="setActiveTab('shifts')">
+          <i class="bi bi-calendar-week me-2"></i>
+          Shifts ({{ shifts().length }})
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+      <!-- Employees Tab -->
+      <div class="tab-pane" *ngIf="activeTab() === 'employees'">
+        <div class="cards-container">
+          <div 
+            class="employee-card" 
+            *ngFor="let employee of employees(); let i = index"
+            [class.first-card]="i === 0">
+            <div class="card-header">
+              <h6 class="employee-name">{{ employee.name }}</h6>
+              <span class="employee-id">ID: {{ employee.id }}</span>
+            </div>
+            <div class="card-content">
+              <div class="employee-info">
+                <div class="info-item">
+                  <i class="bi bi-clock me-1"></i>
+                  <span class="info-label">Max Hours:</span>
+                  <span class="info-value">{{ employee.maxHours }}h</span>
+                </div>
+                <div class="info-item">
+                  <i class="bi bi-calendar-check me-1"></i>
+                  <span class="info-label">Available:</span>
+                  <span class="info-value">{{ formatAvailabilityPeriod(employee.availabilityStart, employee.availabilityEnd) }}</span>
+                </div>
+                <div class="info-item">
+                  <i class="bi bi-tools me-1"></i>
+                  <span class="info-label">Skills:</span>
+                  <div class="skills-tags">
+                    <span class="skill-tag" *ngFor="let skill of employee.skills">
+                      {{ skill }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shifts Tab -->
+      <div class="tab-pane" *ngIf="activeTab() === 'shifts'">
+        <div class="cards-container">
+          <div 
+            class="shift-card" 
+            *ngFor="let shift of shifts(); let i = index"
+            [class.first-card]="i === 0">
+            <div class="card-header">
+              <h6 class="shift-title">{{ shift.title }}</h6>
+              <span class="shift-id">ID: {{ shift.id }}</span>
+            </div>
+            <div class="card-content">
+              <div class="shift-info">
+                <div class="info-item">
+                  <i class="bi bi-calendar3 me-1"></i>
+                  <span class="info-label">Date:</span>
+                  <span class="info-value">{{ formatDate(shift.date) }}</span>
+                </div>
+                <div class="info-item">
+                  <i class="bi bi-clock me-1"></i>
+                  <span class="info-label">Time:</span>
+                  <span class="info-value">{{ shift.startTime }} - {{ shift.endTime }}</span>
+                </div>
+                <div class="info-item">
+                  <i class="bi bi-tools me-1"></i>
+                  <span class="info-label">Required Skills:</span>
+                  <div class="skills-tags">
+                    <span class="skill-tag required" *ngFor="let skill of shift.requiredSkills">
+                      {{ skill }}
+                    </span>
+                  </div>
+                </div>
+                <div class="info-item" *ngIf="shift.assignedEmployeeId">
+                  <i class="bi bi-person-check me-1"></i>
+                  <span class="info-label">Assigned:</span>
+                  <span class="info-value">{{ getEmployeeName(shift.assignedEmployeeId) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Collapsed State -->
+  <div class="sidebar-collapsed" *ngIf="isCollapsed()">
+    <div class="collapsed-section">
+      <i class="bi bi-people-fill"></i>
+      <span class="count-badge">{{ employees().length }}</span>
+    </div>
+    <div class="collapsed-section">
+      <i class="bi bi-calendar-week"></i>
+      <span class="count-badge">{{ shifts().length }}</span>
+    </div>
+  </div>
+</div>
