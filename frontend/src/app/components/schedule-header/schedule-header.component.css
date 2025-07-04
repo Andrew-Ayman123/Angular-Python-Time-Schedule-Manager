@@ -5,6 +5,8 @@
   border-radius: var(--border-radius-lg);
   margin-bottom: var(--spacing-xl);
   box-shadow: var(--shadow-xl);
+  margin-left: var(--spacing-md);
+  margin-right: var(--spacing-md);
 }
 
 .header-section {
