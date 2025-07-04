@@ -1,99 +1,102 @@
-import { Injectable, signal } from '@angular/core';
-import { Employee, Shift, ScheduleEntry } from '../models/employee.model';
+import { Injectable, signal, inject } from '@angular/core';
+import { Employee, Shift, ScheduleEntry } from '../models/index';
+import { UtilsService } from './utils.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ScheduleService {
+  private utilsService = inject(UtilsService);
+  
   employees = signal<Employee[]>([]);
   shifts = signal<Shift[]>([]);
   schedule = signal<ScheduleEntry[]>([]);
   
   // Mock data for demonstration
-  private mockEmployees: Employee[] = [
-    {
+  private mockEmployeesData : Employee[] = [
+    new Employee({
       id: 'E1',
       name: 'John Doe',
       skills: ['cook', 'cashier'],
       maxHours: 80,
-      availabilityStart: '2025-07-01T08:00:00',
-      availabilityEnd: '2025-07-14T22:00:00'
-    },
-    {
+      availabilityStart: new Date('2025-07-01T08:00:00'),
+      availabilityEnd: new Date('2025-07-14T22:00:00')
+    }),
+    new Employee({
       id: 'E2',
       name: 'Jane Smith',
       skills: ['cook'],
       maxHours: 40,
-      availabilityStart: '2025-07-01T06:00:00',
-      availabilityEnd: '2025-07-14T18:00:00'
-    },
-    {
+      availabilityStart: new Date('2025-07-01T06:00:00'),
+      availabilityEnd: new Date('2025-07-14T18:00:00')
+    }),
+    new Employee({
       id: 'E3',
       name: 'Mike Johnson',
       skills: ['inventory', 'maintenance'],
       maxHours: 30,
-      availabilityStart: '2025-07-03T10:00:00',
-      availabilityEnd: '2025-07-13T20:00:00'
-    },
-    {
+      availabilityStart: new Date('2025-07-03T10:00:00'),
+      availabilityEnd: new Date('2025-07-13T20:00:00')
+    }),
+    new Employee({
       id: 'E4',
       name: 'Sarah Wilson',
       skills: ['cashier', 'customer_service'],
       maxHours: 10,
-      availabilityStart: '2025-07-05T12:00:00',
-      availabilityEnd: '2025-07-06T18:00:00'
-    },
-    {
+      availabilityStart: new Date('2025-07-05T12:00:00'),
+      availabilityEnd: new Date('2025-07-06T18:00:00')
+    }),
+    new Employee({
       id: 'E5',
       name: 'Tom Brown',
       skills: ['cashier', 'customer_service'],
       maxHours: 20,
-      availabilityStart: '2025-07-05T12:00:00',
-      availabilityEnd: '2025-07-06T18:00:00'
-    },
-    {
+      availabilityStart: new Date('2025-07-05T12:00:00'),
+      availabilityEnd: new Date('2025-07-06T18:00:00')
+    }),
+    new Employee({
       id: 'E6',
       name: 'Ayman Samir',
       skills: ['cashier', 'customer_service'],
       maxHours: 20,
-      availabilityStart: '2025-07-05T12:00:00',
-      availabilityEnd: '2025-07-06T18:00:00'
-    },
+      availabilityStart: new Date('2025-07-05T12:00:00'),
+      availabilityEnd: new Date('2025-07-06T18:00:00')
+    }),
   ];
 
-  private mockShifts: Shift[] = [
-    {
+  private mockShiftsData : Shift[]= [
+    new Shift({
       id: '1',
       title: 'Morning Shift',
-      startTime: '08:00',
-      endTime: '16:00',
+      startTime: new Date('2025-07-07T08:00:00'),
+      endTime: new Date('2025-07-07T16:00:00'),
       date: '2025-07-07',
       requiredSkills: ['cashier']
-    },
-    {
+    }),
+    new Shift({
       id: '2',
       title: 'Evening Shift',
-      startTime: '16:00',
-      endTime: '24:00',
+      startTime: new Date('2025-07-07T16:00:00'),
+      endTime: new Date('2025-07-08T00:00:00'), // Midnight next day
       date: '2025-07-07',
       requiredSkills: ['manager']
-    },
-    {
+    }),
+    new Shift({
       id: '3',
       title: 'Morning Shift',
-      startTime: '08:00',
-      endTime: '16:00',
+      startTime: new Date('2025-07-08T08:00:00'),
+      endTime: new Date('2025-07-08T16:00:00'),
       date: '2025-07-08',
       requiredSkills: ['inventory']
-    },
-    {
+    }),
+    new Shift({
       id: '4',
       title: 'Weekend Shift',
-      startTime: '10:00',
-      endTime: '18:00',
+      startTime: new Date('2025-07-12T10:00:00'),
+      endTime: new Date('2025-07-12T18:00:00'),
       date: '2025-07-12',
       requiredSkills: ['cashier']
-    }
+    })
   ];
 
   constructor() {
@@ -101,8 +104,8 @@ export class ScheduleService {
   }
 
   loadMockData() {
-    this.employees.set(this.mockEmployees);
-    this.shifts.set(this.mockShifts);
+    this.employees.set(this.mockEmployeesData);
+    this.shifts.set(this.mockShiftsData);
   }
 
   importEmployeesFromCSV(csvData: string): void {
@@ -139,17 +142,17 @@ export class ScheduleService {
             .map(s => s.trim())
             .filter(s => s.length > 0);
           
-          const employee: Employee = {
+          const employee = new Employee({
             id: values[columnMap.get('id')!]?.trim() || '',
             name: values[columnMap.get('name')!]?.trim() || '',
             skills: skills,
             maxHours: parseInt(values[columnMap.get('max_hours')!]?.trim() || '0'),
-            availabilityStart: values[columnMap.get('availability_start')!]?.trim() || '',
-            availabilityEnd: values[columnMap.get('availability_end')!]?.trim() || ''
-          };
+            availabilityStart: new Date(values[columnMap.get('availability_start')!]?.trim() || ''),
+            availabilityEnd: new Date(values[columnMap.get('availability_end')!]?.trim() || '')
+          });
           
           // Validate employee data
-          if (employee.id && employee.name && employee.availabilityStart && employee.availabilityEnd) {
+          if (employee.id && employee.name && !isNaN(employee.availabilityStart.getTime()) && !isNaN(employee.availabilityEnd.getTime())) {
             employees.push(employee);
           } else {
             console.warn(`Skipping invalid employee data at line ${i + 1}:`, employee);
@@ -162,8 +165,6 @@ export class ScheduleService {
     
     this.employees.set(employees);
     console.log('Imported employees:', employees);
-    // Regenerate schedule with new data
-    this.generateSchedule();
   }
 
   importShiftsFromCSV(csvData: string): void {
@@ -202,14 +203,14 @@ export class ScheduleService {
             continue;
           }
           
-          const shift: Shift = {
+          const shift = new Shift({
             id: values[columnMap.get('id')!]?.trim() || '',
             title: values[columnMap.get('role')!]?.trim() || '',
-            startTime: startDateTime.toTimeString().substring(0, 5), // Extract HH:MM format
-            endTime: endDateTime.toTimeString().substring(0, 5),     // Extract HH:MM format
+            startTime: startDateTime,
+            endTime: endDateTime,
             date: startDateTime.toISOString().split('T')[0],         // Extract YYYY-MM-DD format
             requiredSkills: [values[columnMap.get('required_skill')!]?.trim() || '']
-          };
+          });
           
           // Validate shift data
           if (shift.id && shift.title && shift.date && shift.requiredSkills[0]) {
@@ -225,8 +226,6 @@ export class ScheduleService {
     
     this.shifts.set(shifts);
     console.log('Imported shifts:', shifts);
-    // Regenerate schedule with new data
-    this.generateSchedule();
   }
 
   private parseCSVLine(line: string): string[] {
@@ -250,92 +249,108 @@ export class ScheduleService {
     result.push(current);
     return result;
   }
-
-  private isEmployeeAvailableOnDay(employee: Employee, dayOfWeek: string): boolean {
-    // For now, we'll check if the current date falls within the availability period
-    // This is a simplified version - in a real app you'd want more sophisticated time checking
-    const now = new Date();
-    const availabilityStart = new Date(employee.availabilityStart);
-    const availabilityEnd = new Date(employee.availabilityEnd);
+  
+  generateScheduleOffline(): void {
+    console.log('Generating offline schedule...');
     
-    return now >= availabilityStart && now <= availabilityEnd;
-  }
-
-  private isEmployeeAvailableForShift(employee: Employee, shift: Shift): boolean {
-    const shiftDate = new Date(shift.date);
-    const shiftStart = new Date(`${shift.date}T${shift.startTime}`);
-    const shiftEnd = new Date(`${shift.date}T${shift.endTime}`);
+    const employees = this.employees();
+    const shifts = this.shifts();
+    const scheduleEntries: ScheduleEntry[] = [];
     
-    const availabilityStart = new Date(employee.availabilityStart);
-    const availabilityEnd = new Date(employee.availabilityEnd);
-    
-    // Check if shift date is within availability period
-    if (shiftDate < availabilityStart || shiftDate > availabilityEnd) {
-      return false;
-    }
-    
-    // Check if shift time overlaps with availability time on the same day
-    const availabilityStartTime = new Date(availabilityStart);
-    const availabilityEndTime = new Date(availabilityEnd);
-    
-    // For simplicity, if the shift date is within the availability period, 
-    // we'll check if the shift time is within the daily availability hours
-    const availabilityDayStart = new Date(`${shift.date}T${availabilityStart.toTimeString().split(' ')[0]}`);
-    const availabilityDayEnd = new Date(`${shift.date}T${availabilityEnd.toTimeString().split(' ')[0]}`);
-    
-    return shiftStart >= availabilityDayStart && shiftEnd <= availabilityDayEnd;
-  }
-
-  generateSchedule(): void {
-    // Offline greedy solver - first-fit scheduling algorithm
-    const scheduledEntries: ScheduleEntry[] = [];
-    const employeeHours: { [key: string]: number } = {};
-    
-    // Initialize employee hours
-    this.employees().forEach(emp => {
-      employeeHours[emp.id] = 0;
+    // Reset all shift assignments
+    shifts.forEach(shift => {
+      shift.assignedEmployeeId = undefined;
     });
 
-    this.shifts().forEach(shift => {
-      const shiftDate = new Date(shift.date);
-      const dayOfWeek = shiftDate.toLocaleDateString('en-US', { weekday: 'long' });
-      const shiftHours = this.calculateShiftHours(shift.startTime, shift.endTime);
-
-      // Find suitable employee
-      const suitableEmployee = this.employees().find(emp => 
-        this.isEmployeeAvailableForShift(emp, shift) &&
-        emp.skills.some(skill => shift.requiredSkills.includes(skill)) &&
-        (employeeHours[emp.id] + shiftHours) <= emp.maxHours
-      );
-
-      if (suitableEmployee) {
-        employeeHours[suitableEmployee.id] += shiftHours;
-        scheduledEntries.push({
-          shift: { ...shift, assignedEmployeeId: suitableEmployee.id },
-          employee: suitableEmployee
-        });
+    
+    // Sort shifts by date and start time to prioritize earlier shifts
+    const sortedShifts = this.utilsService.sortShiftsByDateTime(shifts);
+    
+    // Track employee assignments and working hours
+    const employeeAssignments = new Map<string, Shift[]>();
+    const employeeWorkingHours = new Map<string, number>();
+    
+    // Initialize tracking maps
+    employees.forEach(emp => {
+      employeeAssignments.set(emp.id, []);
+      employeeWorkingHours.set(emp.id, 0);
+    });
+    
+    // Assign shifts using greedy algorithm with constraints
+    for (const shift of sortedShifts) {
+      const bestEmployee = this.findBestEmployeeForShift(shift, employees, employeeAssignments, employeeWorkingHours);
+      
+      if (bestEmployee) {
+        // Assign the shift
+        shift.assignedEmployeeId = bestEmployee.id;
+        scheduleEntries.push({ shift: shift, employee: bestEmployee });
+        
+        // Update tracking
+        employeeAssignments.get(bestEmployee.id)!.push(shift);
+        const shiftDuration = shift.getDuration();
+        employeeWorkingHours.set(bestEmployee.id, employeeWorkingHours.get(bestEmployee.id)! + shiftDuration);
+        
+        console.log(`Assigned shift ${shift.id} (${shift.title}) to ${bestEmployee.name}`);
       } else {
-        // Add unassigned shift
-        scheduledEntries.push({
-          shift: shift
-        });
+        // Shift remains unassigned
+        scheduleEntries.push({ shift });
+        console.warn(`Could not assign shift ${shift.id} (${shift.title}) - no suitable employee found`);
       }
-    });
-
-    this.schedule.set(scheduledEntries);
-  }
-
-  private calculateShiftHours(startTime: string, endTime: string): number {
-    const start = new Date(`2000-01-01T${startTime}`);
-    const end = new Date(`2000-01-01T${endTime}`);
-    
-    if (end < start) {
-      end.setDate(end.getDate() + 1);
     }
     
-    return (end.getTime() - start.getTime()) / (1000 * 60 * 60);
+    // Update shifts with assignments
+    const updatedShifts = scheduleEntries.map(entry => entry.shift);
+    this.shifts.set(updatedShifts);
+    this.schedule.set(scheduleEntries);
+    
+    console.log('Schedule generation completed');
+    console.log('Assigned shifts:', scheduleEntries.filter(entry => entry.employee).length);
+    console.log('Unassigned shifts:', scheduleEntries.filter(entry => !entry.employee).length);
   }
-
+  
+  private findBestEmployeeForShift(
+    shift: Shift, 
+    employees: Employee[], 
+    employeeAssignments: Map<string, Shift[]>,
+    employeeWorkingHours: Map<string, number>
+  ): Employee | null {
+    const eligibleEmployees = employees.filter(employee => {
+      const currentAssignments = employeeAssignments.get(employee.id) || [];
+      const currentHours = employeeWorkingHours.get(employee.id) || 0;
+      return employee.canBeAssignedToShift(
+        shift,
+        currentAssignments);
+    });
+    
+    if (eligibleEmployees.length === 0) return null;
+    
+    // Select the best employee based on priority criteria
+    return this.selectBestEmployee(shift, eligibleEmployees, employeeWorkingHours);
+  }
+  
+  private selectBestEmployee(
+    shift: Shift, 
+    eligibleEmployees: Employee[], 
+    employeeWorkingHours: Map<string, number>
+  ): Employee {
+    // Priority criteria for selecting the best employee:
+    // 1. Employee with the least current working hours (load balancing)
+    // 2. Employee with the most matching skills (skill utilization)
+    // 3. Tie-breaker: lexicographical order by name
+    
+    return eligibleEmployees.reduce((best, current) => {
+      const bestHours = employeeWorkingHours.get(best.id) || 0;
+      const currentHours = employeeWorkingHours.get(current.id) || 0;
+      
+      // Primary: Prefer employee with fewer working hours
+      if (currentHours < bestHours) return current;
+      if (bestHours < currentHours) return best;
+      
+      // Tie-breaker: lexicographical order
+      return current.name < best.name ? current : best;
+    });
+  }
+  
   getScheduleForWeek(weekStart: Date): ScheduleEntry[] {
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekStart.getDate() + 6);
@@ -348,23 +363,23 @@ export class ScheduleService {
 
   assignEmployeeToShift(shiftId: string, employeeId: string): void {
     const currentShifts = this.shifts();
-    const updatedShifts = currentShifts.map(shift => 
-      shift.id === shiftId ? { ...shift, assignedEmployeeId: employeeId } : shift
-    );
+    const updatedShifts = currentShifts.map(shift => {
+      if (shift.id === shiftId) {
+        shift.assignEmployee(employeeId);
+      }
+      return shift;
+    });
     this.shifts.set(updatedShifts);
-    
-    // Update the schedule as well
-    this.generateSchedule();
   }
 
   unassignEmployeeFromShift(shiftId: string): void {
     const currentShifts = this.shifts();
-    const updatedShifts = currentShifts.map(shift => 
-      shift.id === shiftId ? { ...shift, assignedEmployeeId: undefined } : shift
-    );
+    const updatedShifts = currentShifts.map(shift => {
+      if (shift.id === shiftId) {
+        shift.unassignEmployee();
+      }
+      return shift;
+    });
     this.shifts.set(updatedShifts);
-    
-    // Update the schedule as well
-    this.generateSchedule();
   }
 }

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
-import { Employee } from '../../models/employee.model';
+import { Employee } from '../../models/index';
 import { ScheduleService } from '../../services/schedule.service';
 
 @Component({
@@ -47,9 +47,8 @@ export class EmployeeDetailsCardComponent {
   getEmployeeAssignedHours(employeeId: string): number {
     const shifts = this.scheduleService.shifts().filter(s => s.assignedEmployeeId === employeeId);
     return shifts.reduce((total, shift) => {
-      const start = new Date(`1970-01-01T${shift.startTime}`);
-      const end = new Date(`1970-01-01T${shift.endTime}`);
-      const hours = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
+      const durationMs = shift.endTime.getTime() - shift.startTime.getTime();
+      const hours = durationMs / (1000 * 60 * 60);
       return total + hours;
     }, 0);
   }

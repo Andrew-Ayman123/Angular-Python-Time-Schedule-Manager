@@ -2,7 +2,7 @@
   <!-- Sidebar Header -->
   <div class="sidebar-header">
     <div class="logo-section" *ngIf="!isCollapsed()">
-      <div class="logo-placeholder">Logo</div>
+      <img src="logo.jpeg" alt="Progressio Solutions Logo" class="logo-image">
       <h4 class="company-name">Progressio Solutions</h4>
     </div>
     <button 
@@ -61,7 +61,7 @@
                 <div class="info-item">
                   <i class="bi bi-calendar-check me-1"></i>
                   <span class="info-label">Available:</span>
-                  <span class="info-value">{{ formatAvailabilityPeriod(employee.availabilityStart, employee.availabilityEnd) }}</span>
+                  <span class="info-value">{{ employee.formatAvailabilityPeriod() }}</span>
                 </div>
                 <div class="info-item">
                   <i class="bi bi-tools me-1"></i>
@@ -94,12 +94,12 @@
                 <div class="info-item">
                   <i class="bi bi-calendar3 me-1"></i>
                   <span class="info-label">Date:</span>
-                  <span class="info-value">{{ formatDate(shift.date) }}</span>
+                  <span class="info-value">{{ shift.formatDate() }}</span>
                 </div>
                 <div class="info-item">
                   <i class="bi bi-clock me-1"></i>
                   <span class="info-label">Time:</span>
-                  <span class="info-value">{{ shift.startTime }} - {{ shift.endTime }}</span>
+                  <span class="info-value">{{ shift.formatTimeRange() }}</span>
                 </div>
                 <div class="info-item">
                   <i class="bi bi-tools me-1"></i>

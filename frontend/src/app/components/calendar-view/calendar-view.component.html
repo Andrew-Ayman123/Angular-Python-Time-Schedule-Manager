@@ -186,16 +186,16 @@
               *ngFor="let shift of getShiftsForDate(date); let i = index"
               [class.assigned]="shift.assignedEmployeeId"
               [class.unassigned]="!shift.assignedEmployeeId"
-              matTooltip="{{shift.title}} - {{formatTime(shift.startTime)}} to {{formatTime(shift.endTime)}}{{ shift.assignedEmployeeId ? ' (Assigned to ' + getEmployeeName(shift.assignedEmployeeId) + ')' : '' }}">
+              matTooltip="{{shift.title}} - {{shift.formatTimeRange()}}{{ shift.assignedEmployeeId ? ' (Assigned to ' + getEmployeeById(shift.assignedEmployeeId)?.name + ')' : '' }}">
               
               <div class="shift-brief">
-                <span class="shift-time">{{ formatTime(shift.startTime) }}</span>
+                <span class="shift-time">{{ shift.formatStartTime() }}</span>
                 <span class="shift-title">{{ shift.title }}</span>
               </div>
               
               <div class="shift-assignment" *ngIf="shift.assignedEmployeeId">
                 <mat-icon>person</mat-icon>
-                <span>{{ getEmployeeName(shift.assignedEmployeeId) }}</span>
+                <span>{{ getEmployeeById(shift.assignedEmployeeId)?.name  }}</span>
               </div>
             </div>
           </div>

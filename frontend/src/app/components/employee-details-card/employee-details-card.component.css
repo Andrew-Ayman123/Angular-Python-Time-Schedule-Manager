@@ -56,6 +56,9 @@
   font-weight: 600;
   color: #333;
   margin-bottom: 4px;
+  text-align: center;
+  margin-top: 8px;
+  margin-right: 4px;
 }
 
 .employee-meta {
@@ -93,6 +96,7 @@
   padding: 4px 8px;
   border-radius: 4px;
   font-weight: 500;
+  text-align: center;
 }
 
 .assigned-hours {

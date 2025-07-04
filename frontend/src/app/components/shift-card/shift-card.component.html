@@ -2,15 +2,14 @@
   class="shift-card" 
   [class.unassigned-shift-card]="isUnassigned"
   [class.assigned]="shift.assignedEmployeeId === employee?.id"
-  [class.skill-match]="employee && hasSkillMatch(employee, shift)"
-  [class.skill-mismatch]="employee && !hasSkillMatch(employee, shift)"
-  [matTooltip]="shift.title + ' - ' + formatTime(shift.startTime) + ' to ' + formatTime(shift.endTime)">
+  [class.skill-match]="employee && employee.hasRequiredSkills(shift)"
+  [class.skill-mismatch]="employee && !employee.hasRequiredSkills(shift)">
   
   <div class="shift-header">
     <div class="shift-title">{{ shift.title }}</div>
     <div class="shift-time">
       <mat-icon class="time-icon">schedule</mat-icon>
-      {{ formatTime(shift.startTime) }} - {{ formatTime(shift.endTime) }}
+      {{ shift.formatTimeRange() }}
     </div>
   </div>
   
@@ -33,16 +32,16 @@
                   placeholder="Select employee...">
         <mat-option *ngFor="let emp of employees" 
                     [value]="emp"
-                    [disabled]="!canAssignEmployee(emp, shift)">
+                    [disabled]="!emp.canBeAssignedToShift(shift)">
           <div class="employee-option">
-            <div class="employee-option-avatar" [style.background-color]="getEmployeeColor(emp.id)">
-              {{ getEmployeeInitials(emp.name) }}
+            <div class="employee-option-avatar" [style.background-color]="employee?.getColor()">
+              {{ employee?.getInitials() }}
             </div>
             <div class="employee-option-details">
               <div class="employee-option-name">{{ emp.name }}</div>
               <div class="employee-option-skills">
-                <mat-icon *ngIf="hasSkillMatch(emp, shift)" class="skill-match-icon">check_circle</mat-icon>
-                <mat-icon *ngIf="!hasSkillMatch(emp, shift)" class="skill-mismatch-icon">cancel</mat-icon>
+                <mat-icon *ngIf="emp.hasRequiredSkills(shift)" class="skill-match-icon">check_circle</mat-icon>
+                <mat-icon *ngIf="!emp.hasRequiredSkills(shift)" class="skill-mismatch-icon">cancel</mat-icon>
                 <span>{{ emp.skills.join(', ') }}</span>
               </div>
             </div>
@@ -59,11 +58,11 @@
         mat-mini-fab 
         color="primary" 
         (click)="employee && onAssignEmployee(employee)"
-        [disabled]="!employee || !canAssignEmployee(employee, shift)"
+        [disabled]="!employee || !employee.canBeAssignedToShift(shift)"
         [matTooltip]="'Assign to ' + (employee?.name || '')">
         <mat-icon>add</mat-icon>
       </button>
-      <div class="assignment-hint" *ngIf="employee && hasSkillMatch(employee, shift)">
+      <div class="assignment-hint" *ngIf="employee && employee.hasRequiredSkills(shift)">
         <mat-icon class="skill-match-icon">check_circle</mat-icon>
         <span>Good match</span>
       </div>

@@ -24,16 +24,16 @@
         <div class="hours-info">
           <span class="assigned-hours" 
                 [class.hours-critical]="isEmployeeOvertime(employee.id)">
-            Assigned: {{ getEmployeeAssignedHours(employee.id) }}h
+            Assigned {{ getEmployeeAssignedHours(employee.id) }}h
           </span>
           <span class="remaining-hours" 
                 [class.hours-warning]="getEmployeeRemainingHours(employee.id) < 5 && !isEmployeeOvertime(employee.id)"
                 [class.hours-critical]="getEmployeeRemainingHours(employee.id) === 0 || isEmployeeOvertime(employee.id)">
             <ng-container *ngIf="!isEmployeeOvertime(employee.id)">
-              Remaining: {{ getEmployeeRemainingHours(employee.id) }}h
+              Remaining {{ getEmployeeRemainingHours(employee.id) }}h
             </ng-container>
             <ng-container *ngIf="isEmployeeOvertime(employee.id)">
-              Overtime: {{ getEmployeeOvertimeHours(employee.id) }}h
+              Overtime {{ getEmployeeOvertimeHours(employee.id) }}h
             </ng-container>
           </span>
         </div>

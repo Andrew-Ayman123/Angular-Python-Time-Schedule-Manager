@@ -9,7 +9,8 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ScheduleService } from '../../services/schedule.service';
-import { Employee, Shift } from '../../models/employee.model';
+import { UtilsService } from '../../services/utils.service';
+import { Employee, Shift } from '../../models/index';
 import { EmployeeDetailsCardComponent } from '../employee-details-card/employee-details-card.component';
 import { ShiftCardComponent } from '../shift-card/shift-card.component';
 
@@ -34,9 +35,7 @@ import { ShiftCardComponent } from '../shift-card/shift-card.component';
 })
 export class CalendarViewComponent {
   private scheduleService = inject(ScheduleService);
-  
-  // Expose Math for template use
-  Math = Math;
+  private utilsService = inject(UtilsService);
   
   // Get data from schedule service instead of parent inputs
   employees = computed(() => this.scheduleService.employees());
@@ -144,11 +143,6 @@ export class CalendarViewComponent {
     return this.employees().find(emp => emp.id === employeeId);
   }
 
-  getEmployeeName(employeeId: string): string {
-    const employee = this.getEmployeeById(employeeId);
-    return employee ? employee.name : 'Unknown';
-  }
-
   previousPeriod(): void {
     const current = this.currentDate();
     if (this.selectedView() === 'week') {
@@ -177,44 +171,14 @@ export class CalendarViewComponent {
     this.selectedView.set(view);
   }
 
-  getEmployeeColor(employeeId: string): string {
-    const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57', '#FF9FF3', '#54A0FF'];
-    // Create a simple hash from the string ID to ensure consistent colors
-    let hash = 0;
-    for (let i = 0; i < employeeId.length; i++) {
-      const char = employeeId.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32-bit integer
-    }
-    const colorIndex = Math.abs(hash) % colors.length;
-    return colors[colorIndex];
-  }
-
-  getEmployeeInitials(employeeName: string): string {
-    return employeeName.split(' ').map(n => n[0]).join('');
-  }
-
-  formatTime(time: string): string {
-    const [hours, minutes] = time.split(':');
-    const hour = parseInt(hours);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
-    const displayHour = hour % 12 || 12;
-    return `${displayHour}:${minutes} ${ampm}`;
-  }
-
-  formatDate(date: Date): string {
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'short', 
-      month: 'short', 
-      day: 'numeric' 
-    });
-  }
-
   formatMonthYear(date: Date): string {
     return date.toLocaleDateString('en-US', { 
       month: 'long', 
       year: 'numeric' 
     });
+  }
+  formatDate(date: Date): string {
+    return this.utilsService.formatDate(date);
   }
 
   isCurrentMonth(date: Date): boolean {
@@ -225,14 +189,6 @@ export class CalendarViewComponent {
   isToday(date: Date): boolean {
     const today = new Date();
     return date.toDateString() === today.toDateString();
-  }
-
-  canAssignEmployee(employee: Employee, shift: Shift): boolean {
-    return employee.skills.some(skill => shift.requiredSkills.includes(skill));
-  }
-
-  hasSkillMatch(employee: Employee, shift: Shift): boolean {
-    return employee.skills.some(skill => shift.requiredSkills.includes(skill));
   }
 
   assignEmployee(shift: Shift, employee: Employee): void {
@@ -253,7 +209,7 @@ export class CalendarViewComponent {
 
     const assignedShifts = this.shifts().filter(shift => shift.assignedEmployeeId === employeeId);
     const totalAssignedHours = assignedShifts.reduce((total, shift) => {
-      const shiftHours = this.calculateShiftHours(shift.startTime, shift.endTime);
+      const shiftHours = shift.getDuration();
       return total + shiftHours;
     }, 0);
 
@@ -263,7 +219,7 @@ export class CalendarViewComponent {
   getEmployeeAssignedHours(employeeId: string): number {
     const assignedShifts = this.shifts().filter(shift => shift.assignedEmployeeId === employeeId);
     return assignedShifts.reduce((total, shift) => {
-      const shiftHours = this.calculateShiftHours(shift.startTime, shift.endTime);
+      const shiftHours = shift.getDuration();
       return total + shiftHours;
     }, 0);
   }
@@ -278,17 +234,6 @@ export class CalendarViewComponent {
 
   isEmployeeOvertime(employeeId: string): boolean {
     return this.getEmployeeOvertimeHours(employeeId) > 0;
-  }
-
-  private calculateShiftHours(startTime: string, endTime: string): number {
-    const start = new Date(`2000-01-01T${startTime}`);
-    const end = new Date(`2000-01-01T${endTime}`);
-    
-    if (end < start) {
-      end.setDate(end.getDate() + 1);
-    }
-    
-    return (end.getTime() - start.getTime()) / (1000 * 60 * 60);
   }
 
   // Event handlers for the new components

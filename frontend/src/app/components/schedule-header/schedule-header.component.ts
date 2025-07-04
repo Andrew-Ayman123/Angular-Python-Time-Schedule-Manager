@@ -34,12 +34,6 @@ export interface ILPScheduleOptions {
 })
 export class ScheduleHeaderComponent {
   private scheduleService = inject(ScheduleService);
-  
-  // Outputs for parent component communication
-  importEmployees = output<void>();
-  importShifts = output<void>();
-  generateOfflineSchedule = output<void>();
-  generateILPSchedule = output<ILPScheduleOptions>();
 
   // Multi-selection options for ILP
   ilpOptions = signal<ILPScheduleOptions>({
@@ -75,7 +69,7 @@ export class ScheduleHeaderComponent {
       reader.onload = (e) => {
         const csvData = e.target?.result as string;
         this.scheduleService.importEmployeesFromCSV(csvData);
-        this.importEmployees.emit();
+        
         // Reset file after import
         this.employeesFile.set(null);
       };
@@ -96,7 +90,6 @@ export class ScheduleHeaderComponent {
       reader.onload = (e) => {
         const csvData = e.target?.result as string;
         this.scheduleService.importShiftsFromCSV(csvData);
-        this.importShifts.emit();
         // Reset file after import
         this.shiftsFile.set(null);
       };
@@ -110,11 +103,11 @@ export class ScheduleHeaderComponent {
   }
 
   onGenerateOfflineSchedule(): void {
-    this.generateOfflineSchedule.emit();
+    this.scheduleService.generateScheduleOffline();
   }
 
   onGenerateILPSchedule(): void {
-    this.generateILPSchedule.emit(this.ilpOptions());
+    
   }
 
   updateILPOption(option: keyof ILPScheduleOptions, value: boolean): void {
