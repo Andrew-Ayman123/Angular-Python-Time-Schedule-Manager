@@ -1,6 +1,6 @@
 import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ScheduleHeaderComponent, ILPScheduleOptions } from '../schedule-header/schedule-header.component';
+import { ScheduleHeaderComponent } from '../schedule-header/schedule-header.component';
 import { CalendarViewComponent } from '../calendar-view/calendar-view.component';
 import { ScheduleService } from '../../services/schedule.service';
 

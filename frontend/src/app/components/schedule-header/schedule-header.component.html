@@ -12,84 +12,7 @@
   </div>
 
   <div class="actions-section">
-    <div class="action-group">
-      <h3 class="group-title">
-        <mat-icon>description</mat-icon>
-        Data Handling
-      </h3>
-      <div class="action-buttons">
-        <div class="file-upload-section">
-          <input 
-            type="file" 
-            accept=".csv" 
-            (change)="onEmployeesFileSelect($event)"
-            #employeesFileInput
-            hidden>
-          <button 
-            mat-raised-button 
-            color="primary" 
-            (click)="employeesFileInput.click()"
-            class="upload-btn">
-            <mat-icon>people</mat-icon>
-            Import Employees
-          </button>
-          <span class="file-info" *ngIf="employeesFile()">
-            {{ employeesFile()?.name }}
-          </span>
-          <button 
-            mat-raised-button 
-            color="accent" 
-            (click)="onImportEmployees(); employeesFileInput.value = ''"
-            [disabled]="!employeesFile()"
-            class="process-btn">
-            <mat-icon>upload</mat-icon>
-            Process
-          </button>
-        </div>
-
-        <div class="file-upload-section">
-          <input 
-            type="file" 
-            accept=".csv" 
-            (change)="onShiftsFileSelect($event)"
-            #shiftsFileInput
-            hidden>
-          <button 
-            mat-raised-button 
-            color="primary" 
-            (click)="shiftsFileInput.click()"
-            class="upload-btn">
-            <mat-icon>event</mat-icon>
-            Import Shifts
-          </button>
-          <span class="file-info" *ngIf="shiftsFile()">
-            {{ shiftsFile()?.name }}
-          </span>
-          <button 
-            mat-raised-button 
-            color="accent" 
-            (click)="onImportShifts(); shiftsFileInput.value = ''"
-            [disabled]="!shiftsFile()"
-            class="process-btn">
-            <mat-icon>upload</mat-icon>
-            Process
-          </button>
-        </div>
-
-        <div class="file-upload-section">
-          <button 
-            mat-raised-button 
-            color="primary" 
-            (click)="onExportSchedule()"
-            class="export-btn">
-            <mat-icon>download</mat-icon>
-            Export Schedule
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="action-group">
+    <div class="action-group schedule-generation-full">
       <h3 class="group-title">
         <mat-icon>auto_fix_high</mat-icon>
         Schedule Generation
@@ -101,53 +24,123 @@
           (click)="onGenerateOfflineSchedule()"
           class="schedule-btn">
           <mat-icon>offline_bolt</mat-icon>
-          Generate Offline Schedule
+          Offline Schedule
         </button>
 
         <div class="ilp-section">
-          <button 
-            mat-raised-button 
-            color="primary" 
-            [matMenuTriggerFor]="ilpMenu"
-            class="schedule-btn">
-            <mat-icon>settings</mat-icon>
-            ILP Schedule Options
-          </button>
-          
-          <mat-menu #ilpMenu="matMenu" class="ilp-menu">
-            <div class="ilp-options" (click)="$event.stopPropagation()">
-              <h4>Optimization Options</h4>
-              <mat-checkbox 
-                [(ngModel)]="ilpOptions().optimizeForCost"
-                (change)="updateILPOption('optimizeForCost', $event.checked)">
-                Optimize for Cost
-              </mat-checkbox>
-              <mat-checkbox 
-                [(ngModel)]="ilpOptions().minimizeOvertime"
-                (change)="updateILPOption('minimizeOvertime', $event.checked)">
-                Minimize Overtime
-              </mat-checkbox>
-              <mat-checkbox 
-                [(ngModel)]="ilpOptions().prioritizeSkillMatch"
-                (change)="updateILPOption('prioritizeSkillMatch', $event.checked)">
-                Prioritize Skill Match
-              </mat-checkbox>
-              <mat-checkbox 
-                [(ngModel)]="ilpOptions().balanceWorkload"
-                (change)="updateILPOption('balanceWorkload', $event.checked)">
-                Balance Workload
-              </mat-checkbox>
-              <div class="menu-actions">
-                <button 
-                  mat-raised-button 
-                  color="primary" 
-                  (click)="onGenerateILPSchedule()">
-                  <mat-icon>play_arrow</mat-icon>
-                  Generate ILP Schedule
-                </button>
+          <div class="ilp-container" [class.no-results]="!lastOptimizationResult()">
+            <div class="ilp-inline-config">
+              <h4>
+                <mat-icon>tune</mat-icon>
+                ILP Configuration
+              </h4>
+              
+              <div class="backend-status">
+                <mat-icon [class]="isBackendHealthy() ? 'status-healthy' : 'status-unhealthy'">
+                  {{ isBackendHealthy() ? 'cloud_done' : 'cloud_off' }}
+                </mat-icon>
+                <span class="status-text">
+                  Backend: {{ isBackendHealthy() ? 'Connected' : 'Disconnected' }}
+                </span>
+                <span class="health-check-indicator">
+                  (Auto-checking every 5s)
+                </span>
+              </div>
+
+              <div class="constraints-config">
+                <h5>Constraints</h5>
+                <div class="constraints-grid">
+                  <mat-checkbox 
+                    [(ngModel)]="ilpConstraints().skillMatching"
+                    (change)="updateILPConstraint('skillMatching', $event.checked)">
+                    Skill Matching
+                  </mat-checkbox>
+                  <mat-checkbox 
+                    [(ngModel)]="ilpConstraints().overtimeLimits"
+                    (change)="updateILPConstraint('overtimeLimits', $event.checked)">
+                    Overtime Limits
+                  </mat-checkbox>
+                  <mat-checkbox 
+                    [(ngModel)]="ilpConstraints().availabilityWindows"
+                    (change)="updateILPConstraint('availabilityWindows', $event.checked)">
+                    Availability Windows
+                  </mat-checkbox>
+                  <mat-checkbox 
+                    [(ngModel)]="ilpConstraints().noOverlapping"
+                    (change)="updateILPConstraint('noOverlapping', $event.checked)">
+                    No Overlapping Shifts
+                  </mat-checkbox>
+                </div>
+              </div>
+
+              <button 
+                mat-raised-button 
+                color="primary" 
+                (click)="onGenerateILPSchedule()"
+                [disabled]="!isBackendHealthy() || isOptimizing()"
+                class="ilp-optimize-btn">
+                
+                <mat-icon >play_arrow</mat-icon>
+                {{ isOptimizing() ? 'Optimizing...' : 'ILP Schedule' }}
+              </button>
+            </div>
+
+            <!-- Optimization Results -->
+            <div class="optimization-results" *ngIf="lastOptimizationResult()">
+              <h4>
+                <mat-icon>analytics</mat-icon>
+                Optimization Results
+              </h4>
+              
+              <div class="results-grid" *ngIf="lastOptimizationResult()?.success; else errorResults">
+                <div class="metric-card">
+                  <div class="metric-value">{{ lastOptimizationResult()?.assignments?.length || 0 }}</div>
+                  <div class="metric-label">Assignments Made</div>
+                </div>
+                
+                <div class="metric-card">
+                  <div class="metric-value">{{ lastOptimizationResult()?.unassigned_shifts?.length || 0 }}</div>
+                  <div class="metric-label">Unassigned Shifts</div>
+                </div>
+                
+                <div class="metric-card">
+                  <div class="metric-value">{{ lastOptimizationResult()?.metrics?.total_overtime_minutes || 0 }}</div>
+                  <div class="metric-label">Overtime Minutes</div>
+                </div>
+                
+                <div class="metric-card">
+                  <div class="metric-value">{{ lastOptimizationResult()?.metrics?.constraint_violations || 0 }}</div>
+                  <div class="metric-label">Constraint Violations</div>
+                </div>
+                
+                <div class="metric-card">
+                  <div class="metric-value">{{ lastOptimizationResult()?.metrics?.optimization_time_ms || 0 }}ms</div>
+                  <div class="metric-label">Optimization Time</div>
+                </div>
+                
+                <div class="metric-card">
+                  <div class="metric-value">{{ lastOptimizationResult()?.metrics?.objective_value || 0 }}</div>
+                  <div class="metric-label">Objective Value</div>
+                </div>
+              </div>
+
+              <ng-template #errorResults>
+                <div class="error-results">
+                  <mat-icon>error</mat-icon>
+                  <span>{{ lastOptimizationResult()?.message || 'Optimization failed' }}</span>
+                </div>
+              </ng-template>
+
+              <div class="constraints-applied" *ngIf="lastOptimizationResult()?.constraints_applied?.length">
+                <h5>Applied Constraints:</h5>
+                <div class="constraint-chips">
+                  <span class="constraint-chip" *ngFor="let constraint of lastOptimizationResult()?.constraints_applied">
+                    {{ constraint }}
+                  </span>
+                </div>
               </div>
             </div>
-          </mat-menu>
+          </div>
         </div>
       </div>
     </div>

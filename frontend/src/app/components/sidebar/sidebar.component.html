@@ -20,21 +20,123 @@
     <!-- Tabs Navigation -->
     <div class="tabs-container">
       <div class="tabs-nav">
+        <button type="button" class="tab-button" [class.active]="activeTab() === 'data'"
+          (click)="setActiveTab('data')">
+          <mat-icon class="me-2">upload</mat-icon>
+          <!-- Data -->
+        </button>
         <button type="button" class="tab-button" [class.active]="activeTab() === 'employees'"
           (click)="setActiveTab('employees')">
-          <i class="bi bi-people-fill me-2"></i>
-          Employees ({{ employees().length }})
+          <mat-icon class="me-2">people</mat-icon>
+          ({{ employees().length }})
         </button>
         <button type="button" class="tab-button" [class.active]="activeTab() === 'shifts'"
           (click)="setActiveTab('shifts')">
-          <i class="bi bi-calendar-week me-2"></i>
-          Shifts ({{ shifts().length }})
+          <mat-icon class="me-2">schedule</mat-icon>
+          ({{ shifts().length }})
         </button>
       </div>
     </div>
 
     <!-- Tab Content -->
     <div class="tab-content">
+      <!-- Data Handling Tab -->
+      <div class="tab-pane" *ngIf="activeTab() === 'data'">
+        <div class="data-handling-section">
+          <h5 class="section-title">
+            <mat-icon class="me-2">upload</mat-icon>
+            Import Data
+          </h5>
+          
+          <!-- Employee Import -->
+          <div class="import-group">
+            <h6 class="import-title">
+              <mat-icon class="me-1">people</mat-icon>
+              Employees
+            </h6>
+            <div class="file-upload-section">
+              <input 
+                type="file" 
+                accept=".csv" 
+                (change)="onEmployeesFileSelect($event)"
+                #employeesFileInput
+                hidden>
+              <button 
+                mat-raised-button 
+                color="primary" 
+                (click)="employeesFileInput.click()"
+                class="upload-btn">
+                <mat-icon>file_upload</mat-icon>
+                Choose File
+              </button>
+              <div class="file-info" *ngIf="employeesFile()">
+                <span class="file-name">{{ employeesFile()?.name }}</span>
+                <button 
+                  mat-raised-button 
+                  color="accent" 
+                  (click)="onImportEmployees(); employeesFileInput.value = ''"
+                  [disabled]="!employeesFile()"
+                  class="process-btn">
+                  <mat-icon>upload</mat-icon>
+                  Import
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Shifts Import -->
+          <div class="import-group">
+            <h6 class="import-title">
+              <mat-icon class="me-1">schedule</mat-icon>
+              Shifts
+            </h6>
+            <div class="file-upload-section">
+              <input 
+                type="file" 
+                accept=".csv" 
+                (change)="onShiftsFileSelect($event)"
+                #shiftsFileInput
+                hidden>
+              <button 
+                mat-raised-button 
+                color="primary" 
+                (click)="shiftsFileInput.click()"
+                class="upload-btn">
+                <mat-icon>file_upload</mat-icon>
+                Choose File
+              </button>
+              <div class="file-info" *ngIf="shiftsFile()">
+                <span class="file-name">{{ shiftsFile()?.name }}</span>
+                <button 
+                  mat-raised-button 
+                  color="accent" 
+                  (click)="onImportShifts(); shiftsFileInput.value = ''"
+                  [disabled]="!shiftsFile()"
+                  class="process-btn">
+                  <mat-icon>upload</mat-icon>
+                  Import
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="export-section">
+            <h5 class="section-title">
+              <mat-icon class="me-2">download</mat-icon>
+              Export
+            </h5>
+            <button 
+              mat-raised-button 
+              color="primary" 
+              (click)="onExportSchedule()"
+              class="export-btn">
+              <mat-icon>download</mat-icon>
+              Export Schedule CSV
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Employees Tab -->
       <div class="tab-pane" *ngIf="activeTab() === 'employees'">
         <div class="cards-container">
@@ -46,17 +148,17 @@
             <div class="card-content">
               <div class="employee-info">
                 <div class="info-item">
-                  <i class="bi bi-clock me-1"></i>
+                  <mat-icon class="me-1">schedule</mat-icon>
                   <span class="info-label">Max Hours:</span>
                   <span class="info-value">{{ employee.maxHours }}h</span>
                 </div>
                 <div class="info-item">
-                  <i class="bi bi-calendar-check me-1"></i>
+                  <mat-icon class="me-1">event_available</mat-icon>
                   <span class="info-label">Available:</span>
                   <span class="info-value">{{ employee.formatAvailabilityPeriod() }}</span>
                 </div>
                 <div class="info-item">
-                  <i class="bi bi-tools me-1"></i>
+                  <mat-icon class="me-1">build</mat-icon>
                   <span class="info-label">Skills:</span>
                   <div class="skills-tags">
                     <span class="skill-tag" *ngFor="let skill of employee.skills">
@@ -81,17 +183,17 @@
             <div class="card-content">
               <div class="shift-info">
                 <div class="info-item">
-                  <i class="bi bi-calendar3 me-1"></i>
+                  <mat-icon class="me-1">event</mat-icon>
                   <span class="info-label">Date:</span>
                   <span class="info-value">{{ shift.formatDate() }}</span>
                 </div>
                 <div class="info-item">
-                  <i class="bi bi-clock me-1"></i>
+                  <mat-icon class="me-1">access_time</mat-icon>
                   <span class="info-label">Time:</span>
                   <span class="info-value">{{ shift.formatTimeRange() }}</span>
                 </div>
                 <div class="info-item">
-                  <i class="bi bi-tools me-1"></i>
+                  <mat-icon class="me-1">build</mat-icon>
                   <span class="info-label">Required Skills:</span>
                   <div class="skills-tags">
                     <span class="skill-tag required" *ngFor="let skill of shift.requiredSkills">
@@ -100,7 +202,7 @@
                   </div>
                 </div>
                 <div class="info-item" *ngIf="shift.assignedEmployeeId">
-                  <i class="bi bi-person-check me-1"></i>
+                  <mat-icon class="me-1">person_check</mat-icon>
                   <span class="info-label">Assigned:</span>
                   <span class="info-value">{{ getEmployeeName(shift.assignedEmployeeId) }}</span>
                 </div>
@@ -115,11 +217,11 @@
   <!-- Collapsed State -->
   <div class="sidebar-collapsed" *ngIf="isCollapsed()">
     <div class="collapsed-section">
-      <i class="bi bi-people-fill"></i>
+      <mat-icon>people</mat-icon>
       <span class="count-badge">{{ employees().length }}</span>
     </div>
     <div class="collapsed-section">
-      <i class="bi bi-calendar-week"></i>
+      <mat-icon>schedule</mat-icon>
       <span class="count-badge">{{ shifts().length }}</span>
     </div>
   </div>

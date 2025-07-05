@@ -1,4 +1,5 @@
 import { Shift } from './shift.model';
+import { EmployeeAPI } from './api-schema.model';
 
 export class Employee {
   id: string;
@@ -133,5 +134,22 @@ export class Employee {
     });
     
     return `${formatDateOnly(this.availabilityStart)} ${formatTimeOnly(this.availabilityStart)} - ${formatDateOnly(this.availabilityEnd)} ${formatTimeOnly(this.availabilityEnd)}`;
+  }
+
+  /**
+   * Converts this Employee instance to EmployeeAPI format
+   * @returns EmployeeAPI object suitable for API requests/responses
+   */
+  toEmployeeAPI(): EmployeeAPI {
+    return {
+      id: this.id,
+      name: this.name,
+      skills: this.skills,
+      max_hours: this.maxHours,
+      availability: {
+        start: this.availabilityStart.toISOString(),
+        end: this.availabilityEnd.toISOString()
+      }
+    };
   }
 }

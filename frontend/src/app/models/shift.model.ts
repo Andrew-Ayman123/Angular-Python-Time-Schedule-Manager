@@ -1,3 +1,5 @@
+import { ShiftAPI } from './api-schema.model';
+
 export class Shift {
   id: string;
   title: string;
@@ -122,4 +124,19 @@ export class Shift {
   unassignEmployee(): void {
     this.assignedEmployeeId = undefined;
   }
+
+  /**
+   * Converts this Shift instance to ShiftAPI format
+   * @returns ShiftAPI object suitable for API requests/responses
+   */
+  toShiftAPI(): ShiftAPI {
+    return {
+      id: this.id,
+      role: this.title,
+      start_time: this.startTime.toISOString(),
+      end_time: this.endTime.toISOString(),
+      required_skill: this.requiredSkills[0] || '' // Take first skill or empty string
+    };
+  }
+
 }

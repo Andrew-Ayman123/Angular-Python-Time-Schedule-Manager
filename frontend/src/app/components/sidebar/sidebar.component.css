@@ -101,6 +101,72 @@
   align-items: center;
 }
 
+/* Data Handling Section */
+.data-handling-section {
+  padding: var(--spacing-md);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-xs);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.import-group {
+  margin-bottom: var(--spacing-lg);
+}
+
+.import-title {
+  display: flex;
+  align-items: center;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.file-upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.upload-btn, .process-btn, .export-btn {
+  width: 100%;
+  height: 40px;
+  font-weight: var(--font-weight-medium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+}
+
+.file-info {
+  background: var(--background-light);
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-light);
+}
+
+.file-name {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  word-break: break-all;
+}
+
+.export-section {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--border-light);
+}
+
 /* Tabs */
 .tabs-container {
   margin-bottom: var(--spacing-md);
@@ -345,6 +411,32 @@
 .custom-toggle-btn:active {
   transform: translateY(-50%) scale(0.95);
 }
+
+/* Material Icon Adjustments */
+mat-icon {
+  vertical-align: middle;
+}
+
+mat-icon.me-1 {
+  margin-right: 0.25rem;
+  font-size: 1rem;
+  width: 1rem;
+  height: 1rem;
+}
+
+mat-icon.me-2 {
+  margin-right: 0.5rem;
+  font-size: 1.1rem;
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.collapsed-section mat-icon {
+  font-size: 1.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 992px) {
   .sidebar {
