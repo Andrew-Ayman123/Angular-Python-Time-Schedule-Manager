@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from typing import List
-from models.schemas import Employee, Shift
+from models.schemas import Employee, Shift, Availability
 from models.api_models import ShiftScheduleResponse
 
 def print_metrics(response: ShiftScheduleResponse) -> None:
@@ -22,8 +22,10 @@ def create_employee(
         name=f"Employee {emp_id}",
         skills=skills,
         max_hours=max_hours,
-        availability_start=start_time,
-        availability_end=end_time
+        availability=Availability(
+            start=start_time,
+            end=end_time
+        )
     )
 
 def create_shift(
