@@ -134,10 +134,18 @@
                   </app-shift-card>
                 </div>
                 
-                <!-- Available indicator when no assigned shifts -->
-                <div class="no-shifts" *ngIf="getAssignedShiftsForEmployeeAndDate(employee.id, date).length === 0">
-                  <mat-icon class="no-shifts-icon">event_available</mat-icon>
-                  <span>Available</span>
+                <!-- Available/Unavailable indicator when no assigned shifts -->
+                <div class="no-shifts" 
+                     [class.unavailable]="!isEmployeeAvailableOnDate(employee.id, date)"
+                     *ngIf="getAssignedShiftsForEmployeeAndDate(employee.id, date).length === 0">
+                  <ng-container *ngIf="isEmployeeAvailableOnDate(employee.id, date); else unavailableTemplate">
+                    <mat-icon class="no-shifts-icon">event_available</mat-icon>
+                    <span>Available</span>
+                  </ng-container>
+                  <ng-template #unavailableTemplate>
+                    <mat-icon class="no-shifts-icon unavailable">event_busy</mat-icon>
+                    <span>Unavailable</span>
+                  </ng-template>
                 </div>
               </div>
             </div>

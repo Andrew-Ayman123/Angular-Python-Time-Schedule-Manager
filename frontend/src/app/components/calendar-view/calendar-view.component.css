@@ -207,6 +207,15 @@
   opacity: 0.5;
 }
 
+.no-shifts-icon.unavailable {
+  color: var(--error-color, #f44336);
+  opacity: 0.7;
+}
+
+.no-shifts.unavailable {
+  color: var(--error-color, #f44336);
+}
+
 .day-name {
   font-weight: var(--font-weight-semibold);
   font-size: var(--font-size-base);

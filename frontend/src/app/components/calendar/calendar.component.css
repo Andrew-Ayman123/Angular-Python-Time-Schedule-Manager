@@ -5,9 +5,3 @@
   min-height: 100vh;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .calendar-container {
-    padding: var(--spacing-sm);
-  }
-}

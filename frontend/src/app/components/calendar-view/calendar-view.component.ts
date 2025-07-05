@@ -51,7 +51,7 @@ export class CalendarViewComponent {
     }
   }
 
-  weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  weekDays = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
   
   currentWeek = computed(() => {
     const current = this.currentDate();
@@ -249,5 +249,23 @@ export class CalendarViewComponent {
 
   hasUnassignedShifts(): boolean {
     return this.shifts().some(shift => !shift.assignedEmployeeId);
+  }
+
+  /**
+   * Check if an employee is available on a specific date
+   * @param employeeId The employee ID to check
+   * @param date The date to check availability for
+   * @returns true if the employee is available on that date, false otherwise
+   */
+  isEmployeeAvailableOnDate(employeeId: string, date: Date): boolean {
+    const employee = this.getEmployeeById(employeeId);
+    if (!employee) return false;
+
+    // Check if the date falls within the employee's availability period
+    const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const availStart = new Date(employee.availabilityStart.getFullYear(), employee.availabilityStart.getMonth(), employee.availabilityStart.getDate());
+    const availEnd = new Date(employee.availabilityEnd.getFullYear(), employee.availabilityEnd.getMonth(), employee.availabilityEnd.getDate());
+
+    return dateOnly >= availStart && dateOnly <= availEnd;
   }
 }
