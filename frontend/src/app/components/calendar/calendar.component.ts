@@ -12,10 +12,4 @@ import { ScheduleService } from '../../services/schedule.service';
   styleUrl: './calendar.component.css'
 })
 export class CalendarComponent {
-  private scheduleService = inject(ScheduleService);
-
-  constructor() {
-    // Initialize the schedule service with mock data
-    this.scheduleService.loadMockData();
-  }
 }

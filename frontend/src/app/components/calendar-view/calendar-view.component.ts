@@ -45,14 +45,6 @@ export class CalendarViewComponent {
 
   currentDate = signal(new Date());
   selectedView = signal<'week' | 'month' | 'dashboard'>('week');
-
-  constructor() {
-    // Initialize schedule service with mock data if needed
-    if (this.scheduleService.employees().length === 0) {
-      this.scheduleService.loadMockData();
-    }
-  }
-
   weekDays = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
   
   currentWeek = computed(() => {
