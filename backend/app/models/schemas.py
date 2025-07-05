@@ -11,28 +11,34 @@ class ConstraintType(str, Enum):
     AVAILABILITY_WINDOWS = "availability_windows"
     NO_OVERLAPPING = "no_overlapping"
 
+
+class Availability(BaseModel):
+    """Model representing employee availability window."""
+    start: datetime = Field(..., description="Start time of availability")
+    end: datetime = Field(..., description="End time of availability")
+
+    @field_validator('end')
+    def end_after_start(cls, v, info):
+        """Validate that end time is after start time."""
+        start = info.data.get('start')
+        if start and v <= start:
+            raise ValueError('End time must be after start time')
+        return v
+
+
 class Employee(BaseModel):
     """Model representing an employee in the scheduling system."""
     id: str = Field(..., description="Unique identifier for the employee")
     name: str = Field(..., description="Full name of the employee")
     skills: List[str] = Field(..., description="List of skills the employee possesses")
     max_hours: int = Field(..., ge=0, le=168, description="Maximum weekly hours (0-168)")
-    availability_start: datetime = Field(..., description="Start time of availability")
-    availability_end: datetime = Field(..., description="End time of availability")
+    availability: Availability = Field(..., description="Employee availability window")
 
     @field_validator('skills')
     def skills_not_empty(cls, v):
         """Validate that employee has at least one skill."""
         if not v:
             raise ValueError('Employee must have at least one skill')
-        return v
-    
-    @field_validator('availability_end')
-    def end_after_start(cls, v, info):
-        """Validate that end time is after start time."""
-        start = info.data.get('availability_start')
-        if start and v <= start:
-            raise ValueError('End time must be after start time')
         return v
 
 

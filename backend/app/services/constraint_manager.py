@@ -58,8 +58,8 @@ class ConstraintManager:
     
     def _is_shift_within_availability(self, shift: Shift, employee: Employee) -> bool:
         """Check if a shift falls within an employee's availability window."""
-        return (employee.availability_start <= shift.start_time and 
-                shift.end_time <= employee.availability_end)
+        return (employee.availability.start <= shift.start_time and 
+                shift.end_time <= employee.availability.end)
     
     def _find_overlapping_shifts(self) -> List[Set[str]]:
         """Find groups of overlapping shifts."""
