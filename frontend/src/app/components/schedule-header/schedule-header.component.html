@@ -1,0 +1,148 @@
+<div class="schedule-header">
+  <div class="header-section">
+    <div class="title-section">
+      <h1 class="page-title">
+        <mat-icon>schedule</mat-icon>
+        Employee Schedule Manager
+      </h1>
+      <p class="page-description">
+        Efficiently manage employee schedules with smart assignment and optimization tools
+      </p>
+    </div>
+  </div>
+
+  <div class="actions-section">
+    <div class="action-group schedule-generation-full">
+      <h3 class="group-title">
+        <mat-icon>auto_fix_high</mat-icon>
+        Schedule Generation
+      </h3>
+      <div class="action-buttons">
+        <button 
+          mat-raised-button 
+          color="warn" 
+          (click)="onGenerateOfflineSchedule()"
+          class="schedule-btn">
+          <mat-icon>offline_bolt</mat-icon>
+          Offline Schedule
+        </button>
+
+        <div class="ilp-section">
+          <div class="ilp-container" [class.no-results]="!lastOptimizationResult()">
+            <div class="ilp-inline-config">
+              <h4>
+                <mat-icon>tune</mat-icon>
+                ILP Configuration
+              </h4>
+              
+              <div class="backend-status">
+                <mat-icon [class]="isBackendHealthy() ? 'status-healthy' : 'status-unhealthy'">
+                  {{ isBackendHealthy() ? 'cloud_done' : 'cloud_off' }}
+                </mat-icon>
+                <span class="status-text">
+                  Backend: {{ isBackendHealthy() ? 'Connected' : 'Disconnected' }}
+                </span>
+                <span class="health-check-indicator">
+                  (Auto-checking every 5s)
+                </span>
+              </div>
+
+              <div class="constraints-config">
+                <h5>Constraints</h5>
+                <div class="constraints-grid">
+                  <mat-checkbox 
+                    [(ngModel)]="ilpConstraints().skillMatching"
+                    (change)="updateILPConstraint('skillMatching', $event.checked)">
+                    Skill Matching
+                  </mat-checkbox>
+                  <mat-checkbox 
+                    [(ngModel)]="ilpConstraints().overtimeLimits"
+                    (change)="updateILPConstraint('overtimeLimits', $event.checked)">
+                    Overtime Limits
+                  </mat-checkbox>
+                  <mat-checkbox 
+                    [(ngModel)]="ilpConstraints().availabilityWindows"
+                    (change)="updateILPConstraint('availabilityWindows', $event.checked)">
+                    Availability Windows
+                  </mat-checkbox>
+                  <mat-checkbox 
+                    [(ngModel)]="ilpConstraints().noOverlapping"
+                    (change)="updateILPConstraint('noOverlapping', $event.checked)">
+                    No Overlapping Shifts
+                  </mat-checkbox>
+                </div>
+              </div>
+
+              <button 
+                mat-raised-button 
+                color="primary" 
+                (click)="onGenerateILPSchedule()"
+                [disabled]="!isBackendHealthy() || isOptimizing()"
+                class="ilp-optimize-btn">
+                
+                <mat-icon >play_arrow</mat-icon>
+                {{ isOptimizing() ? 'Optimizing...' : 'ILP Schedule' }}
+              </button>
+            </div>
+
+            <!-- Optimization Results -->
+            <div class="optimization-results" *ngIf="lastOptimizationResult()">
+              <h4>
+                <mat-icon>analytics</mat-icon>
+                Optimization Results
+              </h4>
+              
+              <div class="results-grid" *ngIf="lastOptimizationResult()?.success; else errorResults">
+                <div class="metric-card">
+                  <div class="metric-value">{{ lastOptimizationResult()?.assignments?.length || 0 }}</div>
+                  <div class="metric-label">Assignments Made</div>
+                </div>
+                
+                <div class="metric-card">
+                  <div class="metric-value">{{ lastOptimizationResult()?.unassigned_shifts?.length || 0 }}</div>
+                  <div class="metric-label">Unassigned Shifts</div>
+                </div>
+                
+                <div class="metric-card">
+                  <div class="metric-value">{{ lastOptimizationResult()?.metrics?.total_overtime_minutes || 0 }}</div>
+                  <div class="metric-label">Overtime Minutes</div>
+                </div>
+                
+                <div class="metric-card">
+                  <div class="metric-value">{{ lastOptimizationResult()?.metrics?.constraint_violations || 0 }}</div>
+                  <div class="metric-label">Constraint Violations</div>
+                </div>
+                
+                <div class="metric-card">
+                  <div class="metric-value">{{ lastOptimizationResult()?.metrics?.optimization_time_ms || 0 }}ms</div>
+                  <div class="metric-label">Optimization Time</div>
+                </div>
+                
+                <div class="metric-card">
+                  <div class="metric-value">{{ lastOptimizationResult()?.metrics?.objective_value || 0 }}</div>
+                  <div class="metric-label">Objective Value</div>
+                </div>
+              </div>
+
+              <ng-template #errorResults>
+                <div class="error-results">
+                  <mat-icon>error</mat-icon>
+                  <span>{{ lastOptimizationResult()?.message || 'Optimization failed' }}</span>
+                </div>
+              </ng-template>
+
+              <div class="constraints-applied" *ngIf="lastOptimizationResult()?.constraints_applied?.length">
+                <h5>Applied Constraints:</h5>
+                <div class="constraint-chips">
+                  <span class="constraint-chip" *ngFor="let constraint of lastOptimizationResult()?.constraints_applied">
+                    {{ constraint }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

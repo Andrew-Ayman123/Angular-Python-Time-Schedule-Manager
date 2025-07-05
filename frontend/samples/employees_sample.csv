@@ -1,0 +1,11 @@
+id,name,skills,max_hours,availability_start,availability_end
+E1,John Doe,"cook,cashier",80,2025-07-01T08:00:00,2025-07-14T22:00:00
+E2,Jane Smith,cook,40,2025-07-01T06:00:00,2025-07-14T18:00:00
+E3,Mike Johnson,"inventory,maintenance",30,2025-07-03T10:00:00,2025-07-13T20:00:00
+E4,Sarah Wilson,"cashier,customer_service",35,2025-07-05T12:00:00,2025-07-12T18:00:00
+E5,Tom Brown,"cashier,customer_service",25,2025-07-05T12:00:00,2025-07-11T18:00:00
+E6,Ayman Samir,"cashier,customer_service",20,2025-07-05T12:00:00,2025-07-10T18:00:00
+E7,Lisa Garcia,"manager,customer_service",45,2025-07-01T07:00:00,2025-07-14T23:00:00
+E8,David Lee,"cook,inventory",35,2025-07-02T09:00:00,2025-07-14T21:00:00
+E9,Emma White,"cashier,manager",40,2025-07-01T10:00:00,2025-07-14T20:00:00
+E10,Carlos Rodriguez,"maintenance,inventory",30,2025-07-04T08:00:00,2025-07-13T19:00:00
