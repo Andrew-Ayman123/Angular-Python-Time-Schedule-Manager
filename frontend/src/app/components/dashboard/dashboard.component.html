@@ -1,0 +1,176 @@
+<div class="dashboard-container">
+  <!-- Stats Cards Row -->
+  <div class="stats-row">
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon">
+            <mat-icon>assignment</mat-icon>
+          </div>
+          <div class="stat-details">
+            <div class="stat-value">{{ totalShifts() }}</div>
+            <div class="stat-label">Total Shifts</div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon assigned">
+            <mat-icon>check_circle</mat-icon>
+          </div>
+          <div class="stat-details">
+            <div class="stat-value">{{ assignedShifts() }}</div>
+            <div class="stat-label">Assigned Shifts</div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon unassigned">
+            <mat-icon>radio_button_unchecked</mat-icon>
+          </div>
+          <div class="stat-details">
+            <div class="stat-value">{{ unassignedShifts() }}</div>
+            <div class="stat-label">Unassigned Shifts</div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon">
+            <mat-icon>people</mat-icon>
+          </div>
+          <div class="stat-details">
+            <div class="stat-value">{{ totalEmployees() }}</div>
+            <div class="stat-label">Total Employees</div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon rate">
+            <mat-icon>trending_up</mat-icon>
+          </div>
+          <div class="stat-details">
+            <div class="stat-value">{{ assignmentRate() }}%</div>
+            <div class="stat-label">Assignment Rate</div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon">
+            <mat-icon>schedule</mat-icon>
+          </div>
+          <div class="stat-details">
+            <div class="stat-value">{{ totalHours().toFixed(1) }}</div>
+            <div class="stat-label">Total Hours</div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+
+  <!-- Info Cards Row -->
+  <div class="info-row">
+    <!-- Top Performers -->
+    <mat-card class="info-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>star</mat-icon>
+          Top Performers
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="performers-list">
+          <div class="performer-item" *ngFor="let performer of getTopPerformers(); let i = index">
+            <div class="performer-rank">{{ i + 1 }}</div>
+            <div class="performer-details">
+              <div class="performer-name">{{ performer.name }}</div>
+              <div class="performer-stats">
+                <mat-chip class="shifts-chip">{{ performer.shifts }} shifts</mat-chip>
+                <mat-chip class="hours-chip">{{ performer.hours }}h</mat-chip>
+              </div>
+            </div>
+          </div>
+          <div class="no-data" *ngIf="getTopPerformers().length === 0">
+            <mat-icon>info</mat-icon>
+            <span>No assigned shifts yet</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Unassigned Shifts by Role -->
+    <mat-card class="info-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>warning</mat-icon>
+          Unassigned Shifts by Role
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="unassigned-list">
+          <div class="unassigned-item" *ngFor="let item of getUnassignedShiftsByRole()">
+            <div class="role-name">{{ item.role }}</div>
+            <mat-chip class="unassigned-count">{{ item.count }} unassigned</mat-chip>
+          </div>
+          <div class="no-data" *ngIf="getUnassignedShiftsByRole().length === 0">
+            <mat-icon>check_circle</mat-icon>
+            <span>All shifts are assigned!</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Quick Stats -->
+    <mat-card class="info-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>insights</mat-icon>
+          Quick Insights
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="insights-list">
+          <div class="insight-item">
+            <mat-icon>trending_up</mat-icon>
+            <span>Avg. {{ averageShiftsPerEmployee() }} shifts per employee</span>
+          </div>
+          <div class="insight-item">
+            <mat-icon>schedule</mat-icon>
+            <span>{{ (totalHours() / totalEmployees()).toFixed(1) }}h avg. per employee</span>
+          </div>
+          <div class="insight-item" *ngIf="assignmentRate() >= 90">
+            <mat-icon class="success">check_circle</mat-icon>
+            <span>Excellent assignment rate!</span>
+          </div>
+          <div class="insight-item" *ngIf="assignmentRate() < 70">
+            <mat-icon class="warning">warning</mat-icon>
+            <span>Low assignment rate - needs attention</span>
+          </div>
+          <div class="insight-item" *ngIf="unassignedShifts() === 0">
+            <mat-icon class="success">done_all</mat-icon>
+            <span>All shifts are assigned!</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

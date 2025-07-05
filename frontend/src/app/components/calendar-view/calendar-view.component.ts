@@ -13,6 +13,7 @@ import { UtilsService } from '../../services/utils.service';
 import { Employee, Shift } from '../../models/index';
 import { EmployeeDetailsCardComponent } from '../employee-details-card/employee-details-card.component';
 import { ShiftCardComponent } from '../shift-card/shift-card.component';
+import { DashboardComponent } from '../dashboard/dashboard.component';
 
 @Component({
   selector: 'app-calendar-view',
@@ -28,7 +29,8 @@ import { ShiftCardComponent } from '../shift-card/shift-card.component';
     MatSelectModule,
     MatFormFieldModule,
     EmployeeDetailsCardComponent,
-    ShiftCardComponent
+    ShiftCardComponent,
+    DashboardComponent
   ],
   templateUrl: './calendar-view.component.html',
   styleUrl: './calendar-view.component.css'
@@ -42,7 +44,7 @@ export class CalendarViewComponent {
   shifts = computed(() => this.scheduleService.shifts());
 
   currentDate = signal(new Date());
-  selectedView = signal<'week' | 'month'>('week');
+  selectedView = signal<'week' | 'month' | 'dashboard'>('week');
 
   constructor() {
     // Initialize schedule service with mock data if needed
@@ -167,7 +169,7 @@ export class CalendarViewComponent {
     this.currentDate.set(new Date());
   }
 
-  switchView(view: 'week' | 'month'): void {
+  switchView(view: 'week' | 'month' | 'dashboard'): void {
     this.selectedView.set(view);
   }
 
