@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field, field_validator
 from enum import Enum
 from models.schemas import Employee, Shift, Assignment, ConstraintType, OptimizationMetrics
 
-class ScheduleOptimizationRequest(BaseModel):
+class ShiftScheduleRequest(BaseModel):
     """Request model for schedule optimization."""
     period: str = Field(..., description="Period in ISO format (e.g., '2025-07-01/2025-07-14')")
     employees: List[Employee] = Field(..., min_items=1, description="List of available employees")
@@ -30,7 +30,7 @@ class ScheduleOptimizationRequest(BaseModel):
         return v
 
 
-class ScheduleOptimizationResponse(BaseModel):
+class ShiftScheduleResponse(BaseModel):
     """Response model for schedule optimization."""
     success: bool = Field(..., description="Whether optimization was successful")
     assignments: List[Assignment] = Field(..., description="Optimized shift assignments")

@@ -3,10 +3,10 @@ from fastapi import APIRouter, HTTPException, status
 from loguru import logger
 
 from models.api_models import (
-    ScheduleOptimizationRequest,
-    ScheduleOptimizationResponse
+    ShiftScheduleRequest,
+    ShiftScheduleResponse
 )
-from services.optimization_service import ScheduleOptimizer
+from services.shift_scheduler import ShiftScheduler
 
 # Create router with prefix and tags for OpenAPI documentation
 router = APIRouter(
@@ -19,22 +19,22 @@ router = APIRouter(
 )
 
 
-def get_optimizer() -> ScheduleOptimizer:
+def get_scheduler() -> ShiftScheduler:
     """
-    Create a new optimizer instance for each request.
+    Create a new scheduler instance for each request.
     
     This ensures thread safety when handling multiple concurrent requests.
-    Each request gets its own optimizer instance with isolated state.
+    Each request gets its own scheduler instance with isolated state.
     
     Returns:
-        ScheduleOptimizer: A new optimizer instance
+        ShiftScheduler: A new scheduler instance
     """
-    return ScheduleOptimizer()
+    return ShiftScheduler()
 
 
 @router.post(
     "/optimize",
-    response_model=ScheduleOptimizationResponse,
+    response_model=ShiftScheduleResponse,
     status_code=status.HTTP_200_OK,
     summary="Run ILP optimization with advanced constraints",
     description="""
@@ -47,8 +47,8 @@ def get_optimizer() -> ScheduleOptimizer:
     response_description="Optimized schedule with assignments and metrics"
 )
 async def optimize_schedule(
-    request: ScheduleOptimizationRequest
-) -> ScheduleOptimizationResponse:
+    request: ShiftScheduleRequest
+) -> ShiftScheduleResponse:
     """
     Optimize employee schedule using ILP.
     
@@ -68,11 +68,11 @@ async def optimize_schedule(
         # Validate input data
         _validate_optimization_request(request)
         
-        # Create a new optimizer instance for this request (thread-safe)
-        optimizer = get_optimizer()
+        # Create a new scheduler instance for this request (thread-safe)
+        scheduler = get_scheduler()
         
         # Perform optimization
-        result = optimizer.optimize_schedule(request)
+        result = scheduler.schedule(request)
         
         if result.success:
             logger.info(f"Optimization successful: {len(result.assignments)} assignments")
@@ -95,7 +95,7 @@ async def optimize_schedule(
         )
 
 
-def _validate_optimization_request(request: ScheduleOptimizationRequest) -> None:
+def _validate_optimization_request(request: ShiftScheduleRequest) -> None:
     """
     Validate the optimization request for business logic constraints.
     

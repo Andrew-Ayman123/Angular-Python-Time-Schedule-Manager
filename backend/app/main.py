@@ -26,8 +26,8 @@ def create_application() -> FastAPI:
         redoc_url="/api/redoc",
         openapi_url="/api/openapi.json",
         contact={
-            "name": "Schedule Optimization API",
-            "email": "support@example.com",
+            "name": "Andrew Ayman",
+            "email": "andrewayman9@gmail.com",
         },
         license_info={
             "name": "MIT License",
@@ -74,5 +74,5 @@ if __name__ == "__main__":
         host=settings.host,
         port=settings.port,
         reload=settings.debug,
-        log_level=settings.log_level.lower()
+        log_level=settings.log_level_format[0][0].lower()
     )

@@ -8,24 +8,8 @@ class ConstraintType(str, Enum):
     """Enumeration of available constraint types for optimization."""
     SKILL_MATCHING = "skill_matching"
     OVERTIME_LIMITS = "overtime_limits"
-    # MAX_CONSECUTIVE_DAYS = "max_consecutive_days"
-    # MIN_REST_BETWEEN_SHIFTS = "min_rest_between_shifts"
-    # PREFERRED_SHIFTS = "preferred_shifts"
-
-
-class EmployeeAvailability(BaseModel):
-    """Model representing an employee's availability period."""
-    start: datetime = Field(..., description="Start time of availability")
-    end: datetime = Field(..., description="End time of availability")
-
-    @field_validator('end')
-    def end_after_start(cls, v, info):
-        """Validate that end time is after start time."""
-        start = info.data.get('start')
-        if start and v <= start:
-            raise ValueError('End time must be after start time')
-        return v
-
+    AVAILABILITY_WINDOWS = "availability_windows"
+    NO_OVERLAPPING = "no_overlapping"
 
 class Employee(BaseModel):
     """Model representing an employee in the scheduling system."""
@@ -33,13 +17,22 @@ class Employee(BaseModel):
     name: str = Field(..., description="Full name of the employee")
     skills: List[str] = Field(..., description="List of skills the employee possesses")
     max_hours: int = Field(..., ge=0, le=168, description="Maximum weekly hours (0-168)")
-    availability: EmployeeAvailability = Field(..., description="Employee's availability window")
+    availability_start: datetime = Field(..., description="Start time of availability")
+    availability_end: datetime = Field(..., description="End time of availability")
 
     @field_validator('skills')
     def skills_not_empty(cls, v):
         """Validate that employee has at least one skill."""
         if not v:
             raise ValueError('Employee must have at least one skill')
+        return v
+    
+    @field_validator('availability_end')
+    def end_after_start(cls, v, info):
+        """Validate that end time is after start time."""
+        start = info.data.get('availability_start')
+        if start and v <= start:
+            raise ValueError('End time must be after start time')
         return v
 
 
