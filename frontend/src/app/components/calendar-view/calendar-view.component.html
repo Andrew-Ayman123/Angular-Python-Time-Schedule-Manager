@@ -144,10 +144,18 @@
                 <!-- Available/Unavailable indicator when no assigned shifts -->
                 <div class="no-shifts" 
                      [class.unavailable]="!isEmployeeAvailableOnDate(employee.id, date)"
+                     [class.availability-ending]="doesEmployeeAvailabilityEndOnDate(employee.id, date)"
                      *ngIf="getAssignedShiftsForEmployeeAndDate(employee.id, date).length === 0">
                   <ng-container *ngIf="isEmployeeAvailableOnDate(employee.id, date); else unavailableTemplate">
-                    <mat-icon class="no-shifts-icon">event_available</mat-icon>
-                    <span>Available</span>
+                    <!-- Show availability end time if it ends today, otherwise show Available -->
+                    <ng-container *ngIf="doesEmployeeAvailabilityEndOnDate(employee.id, date); else regularAvailableTemplate">
+                      <mat-icon class="no-shifts-icon availability-ending">schedule</mat-icon>
+                      <span>Ends at {{ getEmployeeAvailabilityEndTime(employee.id, date) }}</span>
+                    </ng-container>
+                    <ng-template #regularAvailableTemplate>
+                      <mat-icon class="no-shifts-icon">event_available</mat-icon>
+                      <span>Available</span>
+                    </ng-template>
                   </ng-container>
                   <ng-template #unavailableTemplate>
                     <mat-icon class="no-shifts-icon unavailable">event_busy</mat-icon>
@@ -243,6 +251,10 @@
         <div class="legend-item">
           <div class="legend-color overtime"></div>
           <span>Overtime Hours</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color availability-end"></div>
+          <span>Availability Ends</span>
         </div>
       </div>
     </mat-card-content>

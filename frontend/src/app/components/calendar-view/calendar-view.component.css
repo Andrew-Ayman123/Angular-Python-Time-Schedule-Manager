@@ -216,6 +216,17 @@
   color: var(--error-color, #f44336);
 }
 
+.no-shifts.availability-ending {
+  color: #ffc506;
+}
+
+.no-shifts-icon.availability-ending {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  color: #ffc506;
+}
+
 .day-name {
   font-weight: var(--font-weight-semibold);
   font-size: var(--font-size-base);
@@ -447,6 +458,11 @@
 .legend-color.overtime {
   background: #ffebee;
   border-left: 4px solid #f44336;
+}
+
+.legend-color.availability-end {
+  background: linear-gradient(135deg, #fff9c4 0%, #ffeb3b 100%);
+  border: 1px solid #fbc02d;
 }
 
 /* Unassigned Shifts Row Styles */

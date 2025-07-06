@@ -47,6 +47,16 @@ export class DashboardComponent implements OnInit {
     return employees > 0 ? Math.round((assigned / employees) * 10) / 10 : 0;
   });
 
+  // Calculate total overtime minutes across all employees
+  totalOvertimeMinutes = computed(() => {
+    return this.employees().reduce((totalOvertime, employee) => {
+      const assignedShifts = this.shifts().filter(shift => shift.assignedEmployeeId === employee.id);
+      const totalAssignedHours = assignedShifts.reduce((total, shift) => total + shift.getDuration(), 0);
+      const overtimeHours = Math.max(0, totalAssignedHours - employee.maxHours);
+      return totalOvertime + (overtimeHours * 60); // Convert hours to minutes
+    }, 0);
+  });
+
   // Chart data
   assignmentChartData = signal<ChartData<'doughnut'>>({
     labels: ['Assigned', 'Unassigned'],
@@ -211,7 +221,7 @@ export class DashboardComponent implements OnInit {
 
     const labels = Array.from(weeklyHours.keys()).map(date => {
       const d = new Date(date);
-      return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
     });
     const data = Array.from(weeklyHours.values());
 

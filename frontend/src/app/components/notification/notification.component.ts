@@ -82,7 +82,7 @@ export class NotificationComponent implements OnInit, OnDestroy {
   }
 
   formatTime(timestamp: Date): string {
-    return new Intl.DateTimeFormat('en-US', {
+    return new Intl.DateTimeFormat(undefined, {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit'

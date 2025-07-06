@@ -2,6 +2,7 @@ import { Injectable, signal, inject } from '@angular/core';
 import { Employee, Shift, ScheduleEntry } from '../models/index';
 import { UtilsService } from './utils.service';
 import { NotificationService } from './notification.service';
+import { ScheduleEntryWithId } from '../models/schedule-entry.model';
 
 @Injectable({
   providedIn: 'root'
@@ -13,102 +14,6 @@ export class ScheduleService {
   employees = signal<Employee[]>([]);
   shifts = signal<Shift[]>([]);
   schedule = signal<ScheduleEntry[]>([]);
-
-  // Mock data for demonstration
-  private mockEmployeesData: Employee[] = [
-    new Employee({
-      id: 'E1',
-      name: 'John Doe',
-      skills: ['cook', 'cashier'],
-      maxHours: 80,
-      availabilityStart: new Date('2025-07-01T08:00:00'),
-      availabilityEnd: new Date('2025-07-14T22:00:00')
-    }),
-    new Employee({
-      id: 'E2',
-      name: 'Jane Smith',
-      skills: ['cook'],
-      maxHours: 40,
-      availabilityStart: new Date('2025-07-01T06:00:00'),
-      availabilityEnd: new Date('2025-07-14T18:00:00')
-    }),
-    new Employee({
-      id: 'E3',
-      name: 'Mike Johnson',
-      skills: ['inventory', 'maintenance'],
-      maxHours: 30,
-      availabilityStart: new Date('2025-07-03T10:00:00'),
-      availabilityEnd: new Date('2025-07-13T20:00:00')
-    }),
-    new Employee({
-      id: 'E4',
-      name: 'Sarah Wilson',
-      skills: ['cashier', 'customer_service'],
-      maxHours: 10,
-      availabilityStart: new Date('2025-07-05T12:00:00'),
-      availabilityEnd: new Date('2025-07-06T18:00:00')
-    }),
-    new Employee({
-      id: 'E5',
-      name: 'Tom Brown',
-      skills: ['cashier', 'customer_service'],
-      maxHours: 20,
-      availabilityStart: new Date('2025-07-05T12:00:00'),
-      availabilityEnd: new Date('2025-07-06T18:00:00')
-    }),
-    new Employee({
-      id: 'E6',
-      name: 'Ayman Samir',
-      skills: ['cashier', 'customer_service'],
-      maxHours: 20,
-      availabilityStart: new Date('2025-07-05T12:00:00'),
-      availabilityEnd: new Date('2025-07-06T18:00:00')
-    }),
-  ];
-
-  private mockShiftsData: Shift[] = [
-    new Shift({
-      id: '1',
-      title: 'Morning Shift',
-      startTime: new Date('2025-07-07T08:00:00'),
-      endTime: new Date('2025-07-07T16:00:00'),
-      date: '2025-07-07',
-      requiredSkills: ['cashier']
-    }),
-    new Shift({
-      id: '2',
-      title: 'Evening Shift',
-      startTime: new Date('2025-07-07T16:00:00'),
-      endTime: new Date('2025-07-08T00:00:00'), // Midnight next day
-      date: '2025-07-07',
-      requiredSkills: ['manager']
-    }),
-    new Shift({
-      id: '3',
-      title: 'Morning Shift',
-      startTime: new Date('2025-07-08T08:00:00'),
-      endTime: new Date('2025-07-08T16:00:00'),
-      date: '2025-07-08',
-      requiredSkills: ['inventory']
-    }),
-    new Shift({
-      id: '4',
-      title: 'Weekend Shift',
-      startTime: new Date('2025-07-12T10:00:00'),
-      endTime: new Date('2025-07-12T18:00:00'),
-      date: '2025-07-12',
-      requiredSkills: ['cashier']
-    })
-  ];
-
-  constructor() {
-    this.loadMockData();
-  }
-
-  loadMockData() {
-    this.employees.set(this.mockEmployeesData);
-    this.shifts.set(this.mockShiftsData);
-  }
 
   importEmployeesFromCSV(csvData: string): void {
     try {
@@ -400,8 +305,6 @@ export class ScheduleService {
           employeeAssignments.get(bestEmployee.id)!.push(shift);
           const shiftDuration = shift.getDuration();
           employeeWorkingHours.set(bestEmployee.id, employeeWorkingHours.get(bestEmployee.id)! + shiftDuration);
-
-          console.log(`Assigned shift ${shift.id} (${shift.title}) to ${bestEmployee.name}`);
           assignedShifts++;
         } else {
           // Shift remains unassigned
@@ -447,6 +350,43 @@ export class ScheduleService {
     }
   }
 
+
+  applyOptimizationResults(assignments: any[]){
+    // first reset all shifts
+    const currentShifts = this.shifts();
+    const currentEmployees = this.employees();
+   
+    currentShifts.forEach(shift => {
+      shift.unassignEmployee();
+    });
+    
+    // Update shifts with assignments and keep the original shifts
+    const updatedShifts = currentShifts.map(shift => {
+      // Handle both possible property name formats
+      const assignment = assignments.find(a => 
+        (a.shiftId === shift.id) || (a.shift_id === shift.id)
+      );
+      if (assignment) {
+        const employeeId = assignment.employeeId || assignment.employee_id;
+        shift.assignEmployee(employeeId);
+      }
+      return shift;
+    });
+
+    this.shifts.set(updatedShifts);
+
+    // Create schedule entries for ALL shifts (both assigned and unassigned)
+    const scheduleEntries: ScheduleEntry[] = updatedShifts.map(shift => {
+      if (shift.assignedEmployeeId) {
+        const employee = currentEmployees.find(e => e.id === shift.assignedEmployeeId);
+        return { shift, employee };
+      } else {
+        return { shift };
+      }
+    });
+    
+    this.schedule.set(scheduleEntries);
+  }
   private findBestEmployeeForShift(
     shift: Shift,
     employees: Employee[],

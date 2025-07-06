@@ -123,7 +123,7 @@
           <div class="export-section">
             <h5 class="section-title">
               <mat-icon class="me-2">download</mat-icon>
-              Export
+              Export Data
             </h5>
             <button 
               mat-raised-button 
@@ -139,7 +139,11 @@
 
       <!-- Employees Tab -->
       <div class="tab-pane" *ngIf="activeTab() === 'employees'">
-        <div class="cards-container">
+        <div class="empty-state" *ngIf="employees().length === 0">
+          <h6 class="empty-title">No Employees</h6>
+          <p class="empty-message">Please import employees to get started</p>
+        </div>
+        <div class="cards-container" *ngIf="employees().length > 0">
           <div class="employee-card" *ngFor="let employee of employees(); let i = index" [class.first-card]="i === 0">
             <div class="card-header">
               <h6 class="employee-name">{{ employee.name }}</h6>
@@ -174,7 +178,11 @@
 
       <!-- Shifts Tab -->
       <div class="tab-pane" *ngIf="activeTab() === 'shifts'">
-        <div class="cards-container">
+        <div class="empty-state" *ngIf="shifts().length === 0">
+          <h6 class="empty-title">No Shifts</h6>
+          <p class="empty-message">Please import shifts to get started</p>
+        </div>
+        <div class="cards-container" *ngIf="shifts().length > 0">
           <div class="shift-card" *ngFor="let shift of shifts(); let i = index" [class.first-card]="i === 0">
             <div class="card-header">
               <h6 class="shift-title">{{ shift.title }}</h6>

@@ -149,6 +149,7 @@ export class ScheduleHeaderComponent implements OnInit, OnDestroy {
         console.log('ILP optimization completed:', response);
         
         if (response.success) {
+
           // Apply the assignments to the schedule
           this.applyOptimizationResults(response);
           
@@ -199,17 +200,8 @@ export class ScheduleHeaderComponent implements OnInit, OnDestroy {
   }
 
   private applyOptimizationResults(response: OptimizeResponse): void {
-    // Apply assignments to shifts
-    const currentShifts = this.scheduleService.shifts();
-    const updatedShifts = currentShifts.map(shift => {
-      const assignment = response.assignments.find(a => a.shiftId === shift.id);
-      if (assignment) {
-        shift.assignedEmployeeId = assignment.employeeId;
-      }
-      return shift;
-    });
     
-    this.scheduleService.shifts.set(updatedShifts);
+    this.scheduleService.applyOptimizationResults(response.assignments);
   }
 
   updateILPConstraint(constraint: keyof ILPConstraints, value: boolean): void {

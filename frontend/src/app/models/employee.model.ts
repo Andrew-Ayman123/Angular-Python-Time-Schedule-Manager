@@ -66,20 +66,8 @@ export class Employee {
    * @returns True if shift is within availability, false otherwise
    */
   isShiftWithinAvailability(shift: Shift): boolean {
-    // Create shift start and end datetimes
-    const shiftDate = new Date(shift.date);
-    const shiftStart = new Date(shiftDate);
-    shiftStart.setHours(shift.startTime.getHours(), shift.startTime.getMinutes(), 0, 0);
-    
-    const shiftEnd = new Date(shiftDate);
-    shiftEnd.setHours(shift.endTime.getHours(), shift.endTime.getMinutes(), 0, 0);
-    
-    // Handle overnight shifts (end time is next day)
-    if (shift.endTime < shift.startTime) {
-      shiftEnd.setDate(shiftEnd.getDate() + 1);
-    }
-    
-    return shiftStart >= this.availabilityStart && shiftEnd <= this.availabilityEnd;
+
+    return shift.startTime >= this.availabilityStart && shift.endTime <= this.availabilityEnd;
   }
 
   /**
@@ -122,12 +110,12 @@ export class Employee {
    * @returns Formatted availability period string
    */
   formatAvailabilityPeriod(): string {
-    const formatDateOnly = (date: Date) => date.toLocaleDateString('en-US', { 
+    const formatDateOnly = (date: Date) => date.toLocaleDateString(undefined, { 
       month: 'short', 
       day: 'numeric' 
     });
     
-    const formatTimeOnly = (date: Date) => date.toLocaleTimeString('en-US', { 
+    const formatTimeOnly = (date: Date) => date.toLocaleTimeString(undefined, { 
       hour: 'numeric', 
       minute: '2-digit',
       hour12: true 
