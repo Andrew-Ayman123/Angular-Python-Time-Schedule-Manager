@@ -42,7 +42,7 @@ export class Shift {
    * @returns Formatted time string (e.g., "8:00 AM")
    */
   formatStartTime(): string {
-    return this.startTime.toLocaleTimeString('en-US', { 
+    return this.startTime.toLocaleTimeString(undefined, { 
       hour: 'numeric', 
       minute: '2-digit',
       hour12: true 
@@ -54,7 +54,7 @@ export class Shift {
    * @returns Formatted time string (e.g., "4:00 PM")
    */
   formatEndTime(): string {
-    return this.endTime.toLocaleTimeString('en-US', { 
+    return this.endTime.toLocaleTimeString(undefined, { 
       hour: 'numeric', 
       minute: '2-digit',
       hour12: true 
@@ -75,7 +75,8 @@ export class Shift {
    */
   formatDate(): string {
     const date = new Date(this.date);
-    return date.toLocaleDateString('en-US', { 
+    
+    return date.toLocaleDateString(undefined, { 
       weekday: 'short', 
       month: 'short', 
       day: 'numeric' 
@@ -88,13 +89,9 @@ export class Shift {
    * @returns True if shifts overlap, false otherwise
    */
   overlapsWith(otherShift: Shift): boolean {
-    // If shifts are on different dates, they don't overlap
-    if (this.date !== otherShift.date) {
-      return false;
-    }
 
     // Check for overlap: shifts overlap if one starts before the other ends
-    return this.startTime < otherShift.endTime && otherShift.startTime < this.endTime;
+    return ! (this.endTime < otherShift.startTime || this.startTime>otherShift.endTime);
   }
 
   overlapsWithAny(otherShifts: Shift[]): boolean {

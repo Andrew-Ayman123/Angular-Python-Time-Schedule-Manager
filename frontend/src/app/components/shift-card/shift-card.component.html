@@ -58,7 +58,6 @@
         mat-mini-fab 
         color="primary" 
         (click)="employee && onAssignEmployee(employee)"
-        [disabled]="!employee || !employee.canBeAssignedToShift(shift)"
         [matTooltip]="'Assign to ' + (employee?.name || '')">
         <mat-icon>add</mat-icon>
       </button>

@@ -25,12 +25,10 @@ export class UtilsService {
    * @returns Formatted date string (e.g., "Mon, Jul 7")
    */
   formatDate(date: Date): string {
-    return date.toLocaleDateString('en-US', { 
+    return date.toLocaleDateString(undefined, { 
       weekday: 'short', 
       month: 'short', 
       day: 'numeric' 
     });
   }
-
-
 }

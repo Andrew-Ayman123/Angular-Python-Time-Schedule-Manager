@@ -102,12 +102,24 @@ export class CalendarViewComponent {
   });
 
   getShiftsForDate(date: Date): Shift[] {
-    const dateString = date.toISOString().split('T')[0];
+    // console.log('Before Getting shifts for date: %s', date);
+    
+    // Use local date string to avoid timezone shifts
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const dateString = `${year}-${month}-${day}`;
+    
+    // console.log('After Getting shifts for date: %s', dateString);
     return this.shifts().filter(shift => shift.date === dateString);
   }
 
   getShiftsForEmployeeAndDate(employeeId: string, date: Date): Shift[] {
-    const dateString = date.toISOString().split('T')[0];
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const dateString = `${year}-${month}-${day}`;
+    
     return this.shifts().filter(shift => 
       shift.date === dateString && 
       (shift.assignedEmployeeId === employeeId || !shift.assignedEmployeeId)
@@ -115,7 +127,11 @@ export class CalendarViewComponent {
   }
 
   getAssignedShiftsForEmployeeAndDate(employeeId: string, date: Date): Shift[] {
-    const dateString = date.toISOString().split('T')[0];
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const dateString = `${year}-${month}-${day}`;
+    
     return this.shifts().filter(shift => 
       shift.date === dateString && 
       shift.assignedEmployeeId === employeeId
@@ -123,7 +139,11 @@ export class CalendarViewComponent {
   }
 
   getUnassignedShiftsForDate(date: Date): Shift[] {
-    const dateString = date.toISOString().split('T')[0];
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const dateString = `${year}-${month}-${day}`;
+    
     return this.shifts().filter(shift => 
       shift.date === dateString && !shift.assignedEmployeeId
     );
@@ -166,7 +186,7 @@ export class CalendarViewComponent {
   }
 
   formatMonthYear(date: Date): string {
-    return date.toLocaleDateString('en-US', { 
+    return date.toLocaleDateString(undefined, { 
       month: 'long', 
       year: 'numeric' 
     });
@@ -261,5 +281,15 @@ export class CalendarViewComponent {
     const availEnd = new Date(employee.availabilityEnd.getFullYear(), employee.availabilityEnd.getMonth(), employee.availabilityEnd.getDate());
 
     return dateOnly >= availStart && dateOnly <= availEnd;
+  }
+
+  // Debug method for template use
+  debugDate(date: Date, index: number): string {
+    // console.log(`Day ${index}:`, date, {
+    //   dateString: date.toDateString(),
+    //   shifts: this.getShiftsForDate(date),
+    //   isToday: this.isToday(date)
+    // });
+    return ''; // Return empty string so it doesn't display in template
   }
 }

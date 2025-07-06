@@ -2,6 +2,7 @@ import { Injectable, signal, inject } from '@angular/core';
 import { Employee, Shift, ScheduleEntry } from '../models/index';
 import { UtilsService } from './utils.service';
 import { NotificationService } from './notification.service';
+import { ScheduleEntryWithId } from '../models/schedule-entry.model';
 
 @Injectable({
   providedIn: 'root'
@@ -351,6 +352,43 @@ export class ScheduleService {
     }
   }
 
+
+  applyOptimizationResults(assignments: any[]){
+    // first reset all shifts
+    const currentShifts = this.shifts();
+    const currentEmployees = this.employees();
+   
+    currentShifts.forEach(shift => {
+      shift.unassignEmployee();
+    });
+    
+    // Update shifts with assignments and keep the original shifts
+    const updatedShifts = currentShifts.map(shift => {
+      // Handle both possible property name formats
+      const assignment = assignments.find(a => 
+        (a.shiftId === shift.id) || (a.shift_id === shift.id)
+      );
+      if (assignment) {
+        const employeeId = assignment.employeeId || assignment.employee_id;
+        shift.assignEmployee(employeeId);
+      }
+      return shift;
+    });
+
+    this.shifts.set(updatedShifts);
+
+    // Create schedule entries for ALL shifts (both assigned and unassigned)
+    const scheduleEntries: ScheduleEntry[] = updatedShifts.map(shift => {
+      if (shift.assignedEmployeeId) {
+        const employee = currentEmployees.find(e => e.id === shift.assignedEmployeeId);
+        return { shift, employee };
+      } else {
+        return { shift };
+      }
+    });
+    
+    this.schedule.set(scheduleEntries);
+  }
   private findBestEmployeeForShift(
     shift: Shift,
     employees: Employee[],

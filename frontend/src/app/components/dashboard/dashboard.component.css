@@ -53,6 +53,10 @@
   background: #9C27B0;
 }
 
+.stat-icon.overtime {
+  background: #F44336;
+}
+
 .stat-icon mat-icon {
   font-size: 24px;
 }
