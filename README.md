@@ -108,6 +108,10 @@ An employee scheduling optimization manager that combines modern web technologie
 
 ## 📸 Demo
 
+
+https://github.com/user-attachments/assets/bd483b01-a7c0-4706-a2e3-56394f0c6561
+
+
 ## 🛠️ Technology Stack
 
 | Component | Technologies |
