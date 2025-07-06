@@ -28,7 +28,14 @@ export class BackendService {
     checkHealth(): Observable<HealthResponse> {
         return this.http.get<HealthResponse>(`${this.baseUrl}/health`).pipe(
             map(response => {
-                this.isBackendHealthy.set(response.status === 'healthy');
+                if (this.isBackendHealthy() && response.status !== 'healthy') {
+                    // If backend was healthy but now is not, reset optimization state
+                    this.isBackendHealthy.set(false);
+                }else{
+                    // If backend is healthy, set the state
+                    this.isBackendHealthy.set(true);
+                }
+                
                 return response;
             }),
             catchError((error) => {

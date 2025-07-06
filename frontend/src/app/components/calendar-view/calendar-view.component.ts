@@ -283,6 +283,43 @@ export class CalendarViewComponent {
     return dateOnly >= availStart && dateOnly <= availEnd;
   }
 
+  /**
+   * Check if an employee's availability ends on a specific date
+   * @param employeeId The employee ID to check
+   * @param date The date to check if availability ends
+   * @returns true if the employee's availability ends on this date, false otherwise
+   */
+  doesEmployeeAvailabilityEndOnDate(employeeId: string, date: Date): boolean {
+    const employee = this.getEmployeeById(employeeId);
+    if (!employee) return false;
+
+    const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const availEndDateOnly = new Date(employee.availabilityEnd.getFullYear(), employee.availabilityEnd.getMonth(), employee.availabilityEnd.getDate());
+
+    return dateOnly.getTime() === availEndDateOnly.getTime();
+  }
+
+  /**
+   * Get the end time for an employee's availability on a specific date
+   * @param employeeId The employee ID to check
+   * @param date The date to get the end time for
+   * @returns The end time as a formatted string, or null if availability doesn't end on this date
+   */
+  getEmployeeAvailabilityEndTime(employeeId: string, date: Date): string | null {
+    if (!this.doesEmployeeAvailabilityEndOnDate(employeeId, date)) {
+      return null;
+    }
+
+    const employee = this.getEmployeeById(employeeId);
+    if (!employee) return null;
+
+    return employee.availabilityEnd.toLocaleTimeString(undefined, { 
+      hour: 'numeric', 
+      minute: '2-digit',
+      hour12: true 
+    });
+  }
+
   // Debug method for template use
   debugDate(date: Date, index: number): string {
     // console.log(`Day ${index}:`, date, {

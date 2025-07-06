@@ -305,8 +305,6 @@ export class ScheduleService {
           employeeAssignments.get(bestEmployee.id)!.push(shift);
           const shiftDuration = shift.getDuration();
           employeeWorkingHours.set(bestEmployee.id, employeeWorkingHours.get(bestEmployee.id)! + shiftDuration);
-
-          console.log(`Assigned shift ${shift.id} (${shift.title}) to ${bestEmployee.name}`);
           assignedShifts++;
         } else {
           // Shift remains unassigned
