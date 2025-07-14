@@ -1,6 +1,6 @@
 <div align="center">
 
-  <h1>🏢 Schedule Optimization System</h1>
+  <h1>🏢 Time Schedule Manager</h1>
   
   
   <img src="https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white" alt="Angular Frontend">
